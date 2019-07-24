@@ -9,18 +9,17 @@ int main(int argc, char* argv[]) {
 
     CmdParser parser;
     auto parameters = parser.parseArguments("", argc, argv);
-    int hashSize = stoi(parser.getValueByKey(parameters, "hashSize"));
     int partyID = stoi(parser.getValueByKey(parameters, "partyID"));
 
-    PrgFromOpenSSLAES prg;
-    auto key = prg.generateKey(128);
+//    PrgFromOpenSSLAES prg;
+//    auto key = prg.generateKey(128);
 //    for (int i=0; i<16; i++){
 //        cout<<(int)key.getEncoded()[i]<<" ";
 //    }
 //    cout<<endl;
 
 //    SecretKey key({144, 41, 147, 169, 38, 73 ,94, 215, 215, 60, 171 ,19, 249, 232 ,54 ,72}, "");
-    prg.setKey(key);
+//    prg.setKey(key);
 
 //    vector<uint64_t> keys;
 //    if (partyID == 0) {
@@ -34,9 +33,13 @@ int main(int argc, char* argv[]) {
 //    } else {
 //    }
 
-    DBParty dic(argc, argv);
-    dic.init(prg.getRandom64(), prg.getRandom64());
-    dic.run();
+    if (partyID == 0) {
+        DBParty dic(argc, argv);
+        dic.run();
+    } else {
+        QueryParty dic(argc, argv);
+        dic.run();
+    }
 
 //    auto start = high_resolution_clock::now();
 //    auto t1 = high_resolution_clock::now();

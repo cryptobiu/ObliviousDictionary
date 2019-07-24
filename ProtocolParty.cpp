@@ -18,18 +18,18 @@ ProtocolParty::ProtocolParty(int argc, char* argv[]) : Protocol("ObliviousDictio
     MPCCommunication comm;
     string partiesFile = this->getParser().getValueByKey(arguments, "partiesFile");
 
-//    otherParty = comm.setCommunication(io_service, partyId, 2, partiesFile)[0];
-//
-//    string tmp = "init times";
-//    //cout<<"before sending any data"<<endl;
-//    byte tmpBytes[20];
-//    if (otherParty->getID() < partyId){
-//        otherParty->getChannel()->write(tmp);
-//        otherParty->getChannel()->read(tmpBytes, tmp.size());
-//    } else {
-//        otherParty->getChannel()->read(tmpBytes, tmp.size());
-//        otherParty->getChannel()->write(tmp);
-//    }
+    otherParty = comm.setCommunication(io_service, partyId, 2, partiesFile)[0];
+
+    string tmp = "init times";
+    //cout<<"before sending any data"<<endl;
+    byte tmpBytes[20];
+    if (otherParty->getID() < partyId){
+        otherParty->getChannel()->write(tmp);
+        otherParty->getChannel()->read(tmpBytes, tmp.size());
+    } else {
+        otherParty->getChannel()->read(tmpBytes, tmp.size());
+        otherParty->getChannel()->write(tmp);
+    }
 
 }
 
@@ -51,9 +51,9 @@ void ProtocolParty::run() {
 
 }
 
-void DBParty::init(int firstSeed, int secondSeed){
+DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
 
-    dic = new ObliviousDictionaryDB(hashSize, firstSeed, secondSeed);
+    dic = new ObliviousDictionaryDB(hashSize);
 }
 
 void DBParty::runOnline() {
@@ -91,7 +91,7 @@ void DBParty::runOnline() {
     cout << "unpeeling took in milliseconds: " << duration << endl;
 
     t1 = high_resolution_clock::now();
-    //dic->send();
+    dic->sendData(otherParty);
 
     t2 = high_resolution_clock::now();
 
@@ -107,9 +107,8 @@ void DBParty::runOnline() {
 
 }
 
-void QueryParty::init(int firstSeed, int secondSeed){
-
-    dic = new ObliviousDictionaryQuery(hashSize, firstSeed, secondSeed);
+QueryParty::QueryParty(int argc, char *argv[]) : ProtocolParty(argc, argv){
+    dic = new ObliviousDictionaryQuery(hashSize);
 }
 
 
@@ -122,15 +121,21 @@ void QueryParty::runOnline() {
     auto t2 = high_resolution_clock::now();
 
     auto duration = duration_cast<milliseconds>(t2-t1).count();
-    cout << "fillTables took in milliseconds: " << duration << endl;
+    cout << "read data took in milliseconds: " << duration << endl;
 
+    t1 = high_resolution_clock::now();
+    dic->calcRealValues();
+    t2 = high_resolution_clock::now();
+
+    duration = duration_cast<milliseconds>(t2-t1).count();
+    cout << "calc real values took in milliseconds: " << duration << endl;
 
     auto end = high_resolution_clock::now();
 
     duration = duration_cast<milliseconds>(end-start).count();
     cout << "all protocol took in milliseconds: " << duration << endl;
 
-    dic->calcRealValues();
+
 
 }
 

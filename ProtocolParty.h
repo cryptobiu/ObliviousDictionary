@@ -27,8 +27,6 @@ public:
 
     ProtocolParty(int argc, char *argv[]);
 
-    virtual void init(int firstSeed, int secondSeed) = 0;
-
     void run() override;
 
     bool hasOffline() override {
@@ -50,8 +48,7 @@ private :
     ObliviousDictionaryDB* dic;
 public:
 
-    DBParty(int argc, char *argv[]) : ProtocolParty(argc, argv){}
-    void init(int firstSeed, int secondSeed) override;
+    DBParty(int argc, char *argv[]);
 
     void runOnline() override;
 };
@@ -61,7 +58,7 @@ private :
     ObliviousDictionaryQuery* dic;
 public:
 
-    void init(int firstSeed, int secondSeed) override;
+    QueryParty(int argc, char *argv[]);
 
     void runOnline() override;
 

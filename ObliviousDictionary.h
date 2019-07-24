@@ -48,6 +48,8 @@ protected:
     int hashSize;
     int tableRealSize;
 
+    uint64_t firstSeed, secondSeed;
+
     PrgFromOpenSSLAES prg;
     vector<uint64_t> keys;
 
@@ -61,16 +63,9 @@ protected:
 
 public:
 
-    ObliviousDictionary(int hashSize, int firstSeed, int secondSeed) : hashSize(hashSize){
+    ObliviousDictionary(int hashSize) : hashSize(hashSize){
 
-        first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
-        second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
 
-        tableRealSize = first.bucket_count();
-        cout<<"tableRealSize = "<<tableRealSize<<endl;
-
-        firstEncValues.resize(tableRealSize, 0);
-        secondEncValues.resize(tableRealSize, 0);
     }
 
     uint64_t getPolynomialValue(uint64_t key){
@@ -93,10 +88,22 @@ private:
 
 public:
 
-    ObliviousDictionaryDB(int hashSize, int firstSeed, int secondSeed) : ObliviousDictionary(hashSize, firstSeed, secondSeed) {
+    ObliviousDictionaryDB(int hashSize) : ObliviousDictionary(hashSize) {
 
         auto key = prg.generateKey(128);
         prg.setKey(key);
+
+        firstSeed = prg.getRandom64();
+        secondSeed = prg.getRandom64();
+        first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
+        second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
+
+        tableRealSize = first.bucket_count();
+        cout<<"tableRealSize = "<<tableRealSize<<endl;
+
+        firstEncValues.resize(tableRealSize, 0);
+        secondEncValues.resize(tableRealSize, 0);
+
 
         keys.resize(hashSize);
         vals.reserve(hashSize);
@@ -104,6 +111,12 @@ public:
         for (int i=0; i<hashSize; i++){
             keys[i] = prg.getRandom64() >> 24;
             vals.insert({keys[i],prg.getRandom64()>>24});
+        }
+
+        int numKeysToCheck = 10;
+        cout<<"keys to check with the other party"<<endl;
+        for (int i=0; i<numKeysToCheck; i++){
+            cout<<"key = "<<keys[i]<<" val = "<<vals[keys[i]]<<endl;
         }
 
     }
@@ -307,6 +320,17 @@ public:
 
 
     void sendData(shared_ptr<ProtocolPartyData> otherParty){
+//TODO should be deleted!!
+        otherParty->getChannel()->write((byte*)&firstSeed, 8);
+        otherParty->getChannel()->write((byte*)&secondSeed, 8);
+        int polySize = polynomial.size();
+        cout<<"firstSeed = "<<firstSeed<<endl;
+        cout<<"secondSeed = "<<secondSeed<<endl;
+        cout<<"polySize = "<<polySize<<endl;
+        otherParty->getChannel()->write((byte*)&polySize, 4);
+        otherParty->getChannel()->write((byte*)keys.data(), keys.size()*8);
+//TODO until here
+
         otherParty->getChannel()->write((byte*)firstEncValues.data(), firstEncValues.size()*8);
         otherParty->getChannel()->write((byte*)secondEncValues.data(), secondEncValues.size()*8);
         otherParty->getChannel()->write((byte*)polynomial.data(), polynomial.size()*8);
@@ -316,11 +340,43 @@ public:
 class ObliviousDictionaryQuery : public ObliviousDictionary {
 public:
 
-    ObliviousDictionaryQuery(int hashSize, int firstSeed, int secondSeed) : ObliviousDictionary(hashSize, firstSeed, secondSeed){
+    ObliviousDictionaryQuery(int hashSize) : ObliviousDictionary(hashSize){
 
-}
+        auto key = prg.generateKey(128);
+        prg.setKey(key);
+    }
 
     void readData(shared_ptr<ProtocolPartyData> otherParty){
+
+//TODO should be deleted!!
+        otherParty->getChannel()->read((byte*)&firstSeed, 8);
+        otherParty->getChannel()->read((byte*)&secondSeed, 8);
+        int size;
+        otherParty->getChannel()->read((byte*)&size, 4);
+        cout<<"firstSeed = "<<firstSeed<<endl;
+        cout<<"secondSeed = "<<secondSeed<<endl;
+        cout<<"polySize = "<<size<<endl;
+        vector<uint64_t> tmpKeys(hashSize);
+        otherParty->getChannel()->read((byte*)tmpKeys.data(), tmpKeys.size()*8);
+
+        int numKeysToCheck = 10;
+        keys.resize(numKeysToCheck);
+        for (int i=0; i<numKeysToCheck; i++){
+            keys[i] = tmpKeys[i];//prg.getRandom32() % hashSize;
+        }
+
+        polynomial.resize(size);
+
+        first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
+        second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
+
+        tableRealSize = first.bucket_count();
+        cout<<"tableRealSize = "<<tableRealSize<<endl;
+
+        firstEncValues.resize(tableRealSize, 0);
+        secondEncValues.resize(tableRealSize, 0);
+//TODO until here
+
         otherParty->getChannel()->read((byte*)firstEncValues.data(), firstEncValues.size()*8);
         otherParty->getChannel()->read((byte*)secondEncValues.data(), secondEncValues.size()*8);
         otherParty->getChannel()->read((byte*)polynomial.data(), polynomial.size()*8);
@@ -329,13 +385,13 @@ public:
     void calcRealValues(){
 
         cout<<"vals:"<<endl;
-        uint64_t firstPosition, secondPosition, key, val, poliVal;
+        uint64_t firstPosition, secondPosition, val, poliVal;
         int size = keys.size();
         vector<uint64_t> vals(size);
         for (int i=0; i<size; i++){
-            poliVal = getPolynomialValue(key);
-            firstPosition = first.bucket(key);
-            secondPosition = second.bucket(key);
+            poliVal = getPolynomialValue(keys[i]);
+            firstPosition = first.bucket(keys[i]);
+            secondPosition = second.bucket(keys[i]);
 
             vals[i] = firstEncValues[firstPosition] ^ secondEncValues[secondPosition] ^ poliVal;
             cout<<"key = "<<keys[i]<<" val = "<<vals[i]<<endl;
