@@ -49,6 +49,7 @@ private :
 public:
 
     DBParty(int argc, char *argv[]);
+    ~DBParty();
 
     void runOnline() override;
 };
@@ -59,7 +60,7 @@ private :
 public:
 
     QueryParty(int argc, char *argv[]);
-
+    ~QueryParty();
     void runOnline() override;
 
 

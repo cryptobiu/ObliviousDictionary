@@ -10,6 +10,9 @@
 #include <libscapi/include/comm/MPCCommunication.hpp>
 #include "xxhash.h"
 #include "Poly.h"
+#include <chrono>
+
+using namespace std::chrono;
 
 using namespace std;
 
@@ -63,16 +66,26 @@ protected:
 
 public:
 
-    ObliviousDictionary(int hashSize) : hashSize(hashSize){
+    ObliviousDictionary(int hashSize) : hashSize(hashSize){}
 
+    uint64_t getPolynomialValue(uint64_t key);
 
-    }
+    void createSets(){
+        first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
+        second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
 
-    uint64_t getPolynomialValue(uint64_t key){
-        ZpMersenneLongElement b;
-        Poly::evalMersenne(&b, polynomial, (ZpMersenneLongElement*)&key);
+        tableRealSize = first.bucket_count();
+        cout<<"tableRealSize = "<<tableRealSize<<endl;
 
-        return *(uint64_t*)&b;
+        while(tableRealSize/1.2 < hashSize){
+            first = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(firstSeed));
+            second = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(secondSeed));
+
+            tableRealSize = first.bucket_count();
+            cout<<"tableRealSize = "<<tableRealSize<<endl;
+        }
+        hashSize = tableRealSize/1.2;
+        cout<<"new hashSize = "<<hashSize<<endl;
     }
 
 };
@@ -84,22 +97,23 @@ private:
     unordered_map<uint64_t, uint64_t> vals;
 
     vector<uint64_t> peelingVector;
+    int peelingCounter;
 
 
 public:
 
-    ObliviousDictionaryDB(int hashSize) : ObliviousDictionary(hashSize) {
+    ObliviousDictionaryDB(int size) : ObliviousDictionary(size) {
 
         auto key = prg.generateKey(128);
         prg.setKey(key);
 
         firstSeed = prg.getRandom64();
         secondSeed = prg.getRandom64();
-        first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
-        second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
+        createSets();
 
-        tableRealSize = first.bucket_count();
+        cout<<"after create sets"<<endl;
         cout<<"tableRealSize = "<<tableRealSize<<endl;
+        cout<<"hashSize = "<<hashSize<<endl;
 
         firstEncValues.resize(tableRealSize, 0);
         secondEncValues.resize(tableRealSize, 0);
@@ -109,8 +123,8 @@ public:
         vals.reserve(hashSize);
 
         for (int i=0; i<hashSize; i++){
-            keys[i] = prg.getRandom64() >> 24;
-            vals.insert({keys[i],prg.getRandom64()>>24});
+            keys[i] = prg.getRandom64() >> 3;
+            vals.insert({keys[i],prg.getRandom64()>>3});
         }
 
         int numKeysToCheck = 10;
@@ -127,26 +141,14 @@ public:
 
 //            cout<<"key is "<<keys[i]<<endl;
             auto pair = first.insert(keys[i]);
+//            first.insert(keys[i]);
             second.insert(keys[i]);
 
             if (pair.second == false){
                 cout<<"key = "<<keys[i]<<" i = "<<i<<endl;
             }
-//            cout<<"bucket1 is "<<first.bucket(keys[i])<<endl;
-//            cout<<"bucket2 is "<<second.bucket(keys[i])<<endl;
-
         }
 
-//        for (int i=0; i<hashSize/2; i++){
-//
-////            cout<<"key is "<<keys[i]<<endl;
-//            first.insert(keys[i] + 1056323);
-//            second.insert(keys[i] + 1056323);
-//
-////            cout<<"bucket1 is "<<first.bucket(keys[i])<<endl;
-////            cout<<"bucket2 is "<<second.bucket(keys[i])<<endl;
-//
-//        }
 
         cout<<"first set contains "<<first.size()<<endl;
         cout<<"second set contains "<<second.size()<<endl;
@@ -155,20 +157,29 @@ public:
 
     void peeling(){
 
+        peelingVector.resize(hashSize);
+        peelingCounter = 0;
+
+        auto t1 = high_resolution_clock::now();
         //Goes on the first hash
         for (int position = 0; position<tableRealSize; position++){
             if (first.bucket_size(position) == 1){
                 //Delete the vertex from the graph
                 auto key = *first.begin(position);
 //                cout<<"remove key "<<key<<endl;
-                peelingVector.push_back(key);
+                peelingVector[peelingCounter++] = key;
                 first.erase(key);
 
                 //Update the second vertex on the edge
                 second.erase(key);
             }
         }
+        auto t2 = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(t2-t1).count();
 
+        cout << "time in milliseconds for first loop: " << duration << endl;
+
+        t1 = high_resolution_clock::now();
         //goes on the second hash
         for (int position = 0; position<tableRealSize; position++){
             if (second.bucket_size(position) == 1){
@@ -182,7 +193,7 @@ public:
 
                 while(secondBucket <= position) {
 
-                    peelingVector.push_back(key);
+                    peelingVector[peelingCounter++] = key;
 //                    cout<<"remove key "<<key<<endl;
                     second.erase(key);
 
@@ -193,7 +204,7 @@ public:
                     if (first.bucket_size(bucket) == 1) {
                         key = *first.begin(bucket);
 //                        cout<<"remove key from first "<<key<<endl;
-                        peelingVector.push_back(key);
+                        peelingVector[peelingCounter++] = key;
                         first.erase(key);
 
                         //Update the second vertex on the edge
@@ -214,10 +225,16 @@ public:
                 }
             }
         }
+        t2 = high_resolution_clock::now();
+        duration = duration_cast<milliseconds>(t2-t1).count();
+
+        cout << "time in milliseconds for second loop: " << duration << endl;
 
         if (hasLoop()){
             cout << "remain loops!!!" << endl;
         }
+
+        cout<<"peelingCounter = "<<peelingCounter<<endl;
 
     }
 
@@ -262,10 +279,9 @@ public:
     void unpeeling(){
         cout<<"in unpeeling"<<endl;
         uint64_t firstPosition, secondPosition, poliVal, key;
-        while (peelingVector.size()>0){
-            key = peelingVector.back();
+        while (peelingCounter > 0){
 //            cout<<"key = "<<key<<endl;
-            peelingVector.pop_back();
+            key = peelingVector[--peelingCounter];
             firstPosition = first.bucket(key);
             secondPosition = second.bucket(key);
 
@@ -282,6 +298,7 @@ public:
 //                cout<<"set value to second in bucket "<<secondPosition<<endl;
             }
         }
+        cout<<"peelingCounter = "<<peelingCounter<<endl;
     }
 
     void checkOutput(){
@@ -301,8 +318,8 @@ public:
                     cout<<"good value!!! val = "<<val<<endl;
             } else {//if (!hasLoop()){
                 cout<<"invalid value :( val = "<<val<<" wrong val = "<<(firstEncValues[firstPosition] ^ secondEncValues[secondPosition] ^ poliVal)<<endl;
-                cout<<"firstEncValues[firstPosition] = "<<firstEncValues[firstPosition]<<endl;
-                cout<<"secondEncValues[secondPosition] = "<<secondEncValues[secondPosition]<<endl;
+                cout<<"firstEncValues["<<firstPosition<<"] = "<<firstEncValues[firstPosition]<<endl;
+                cout<<"secondEncValues["<<secondPosition<<"] = "<<secondEncValues[secondPosition]<<endl;
                 cout<<"poliVal = "<<poliVal<<endl;
             }
 
@@ -351,6 +368,10 @@ public:
 //TODO should be deleted!!
         otherParty->getChannel()->read((byte*)&firstSeed, 8);
         otherParty->getChannel()->read((byte*)&secondSeed, 8);
+
+        createSets();
+
+
         int size;
         otherParty->getChannel()->read((byte*)&size, 4);
         cout<<"firstSeed = "<<firstSeed<<endl;
@@ -367,11 +388,6 @@ public:
 
         polynomial.resize(size);
 
-        first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
-        second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
-
-        tableRealSize = first.bucket_count();
-        cout<<"tableRealSize = "<<tableRealSize<<endl;
 
         firstEncValues.resize(tableRealSize, 0);
         secondEncValues.resize(tableRealSize, 0);

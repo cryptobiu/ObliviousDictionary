@@ -56,6 +56,10 @@ DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
     dic = new ObliviousDictionaryDB(hashSize);
 }
 
+DBParty::~DBParty(){
+    delete dic;
+}
+
 void DBParty::runOnline() {
 
     auto start = high_resolution_clock::now();
@@ -110,6 +114,11 @@ void DBParty::runOnline() {
 QueryParty::QueryParty(int argc, char *argv[]) : ProtocolParty(argc, argv){
     dic = new ObliviousDictionaryQuery(hashSize);
 }
+
+QueryParty::~QueryParty() {
+    delete dic;
+}
+
 
 
 void QueryParty::runOnline() {
