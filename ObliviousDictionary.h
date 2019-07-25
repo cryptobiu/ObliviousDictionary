@@ -11,6 +11,7 @@
 #include "xxhash.h"
 #include "Poly.h"
 #include <chrono>
+#include <math.h>       /* log2 */
 
 using namespace std::chrono;
 
@@ -58,6 +59,7 @@ protected:
     vector<uint64_t> secondEncValues;
 
     vector<ZpMersenneLongElement> polynomial;
+    int polySize;
 
 public:
 

@@ -167,8 +167,9 @@ void ObliviousDictionaryDB::peeling(){
 
 void ObliviousDictionaryDB::calcPolynomial(){
 
-    vector<uint64_t> edgesForPolynomial;
-    vector<uint64_t> valuesForPolynomial;
+    polySize = 5*log2(hashSize);
+    vector<uint64_t> edgesForPolynomial(polySize);
+    vector<uint64_t> valuesForPolynomial(polySize);
 
     //Assign random values to all vertex in the circles.
     for (int i=0; i<tableRealSize; i++){
@@ -183,23 +184,35 @@ void ObliviousDictionaryDB::calcPolynomial(){
     }
 
     //Get all the edges that are in the graph's circles and calc the polynomial values that should be for them.
+    int polyCounter = 0;
     for (int i=0; i<tableRealSize; i++){
         if (first.bucket_size(i) > 1){
             for (auto key = first.begin(i); key!= first.end(i); ++key){
-                edgesForPolynomial.push_back(*key);
-                valuesForPolynomial.push_back(firstEncValues[i] ^ secondEncValues[second.bucket(*key)] ^ vals[*key]);
-
+                edgesForPolynomial[polyCounter] = *key;
+                valuesForPolynomial[polyCounter] = firstEncValues[i] ^ secondEncValues[second.bucket(*key)] ^ vals[*key];
+                polyCounter++;
             }
         }
     }
 
+    cout<<"circles size =  "<<polyCounter<<endl;
+
+    if (polyCounter < polySize){
+        for (int i=polyCounter; i<polySize; i++){
+            edgesForPolynomial[polyCounter] = peelingVector[i];
+            valuesForPolynomial[polyCounter] = prg.getRandom64() >> 3;
+            polyCounter++;
+        }
+    } else if (polyCounter > polySize){
+        cout<<"error!!! circles size is bigger than polynomial size"<<endl;
+    }
+
 
     //TODO interpolate!!!
-    cout<<"poly size =  "<<edgesForPolynomial.size()<<endl;
-    polynomial.resize(edgesForPolynomial.size());
-    Poly::interpolateMersenne(polynomial, (ZpMersenneLongElement*)edgesForPolynomial.data(), (ZpMersenneLongElement*)valuesForPolynomial.data(), edgesForPolynomial.size());
-
-
+    polynomial.resize(polySize);
+    cout<<"poly size =  "<<polynomial.size()<<endl;
+    Poly::interpolateMersenne(polynomial, (ZpMersenneLongElement*)edgesForPolynomial.data(), (ZpMersenneLongElement*)valuesForPolynomial.data(), polySize);
+    
 }
 
 
@@ -267,16 +280,14 @@ void ObliviousDictionaryDB::sendData(shared_ptr<ProtocolPartyData> otherParty){
 //TODO should be deleted!!
     otherParty->getChannel()->write((byte*)&firstSeed, 8);
     otherParty->getChannel()->write((byte*)&secondSeed, 8);
-    int polySize = polynomial.size();
     cout<<"firstSeed = "<<firstSeed<<endl;
     cout<<"secondSeed = "<<secondSeed<<endl;
-    cout<<"polySize = "<<polySize<<endl;
-    otherParty->getChannel()->write((byte*)&polySize, 4);
     otherParty->getChannel()->write((byte*)keys.data(), keys.size()*8);
 //TODO until here
 
     otherParty->getChannel()->write((byte*)firstEncValues.data(), firstEncValues.size()*8);
     otherParty->getChannel()->write((byte*)secondEncValues.data(), secondEncValues.size()*8);
+    cout<<"polySize = "<<polynomial.size()<<endl;
     otherParty->getChannel()->write((byte*)polynomial.data(), polynomial.size()*8);
 }
 
@@ -294,12 +305,8 @@ void ObliviousDictionaryQuery::readData(shared_ptr<ProtocolPartyData> otherParty
 
     createSets();
 
-
-    int size;
-    otherParty->getChannel()->read((byte*)&size, 4);
     cout<<"firstSeed = "<<firstSeed<<endl;
     cout<<"secondSeed = "<<secondSeed<<endl;
-    cout<<"polySize = "<<size<<endl;
     vector<uint64_t> tmpKeys(hashSize);
     otherParty->getChannel()->read((byte*)tmpKeys.data(), tmpKeys.size()*8);
 
@@ -309,7 +316,9 @@ void ObliviousDictionaryQuery::readData(shared_ptr<ProtocolPartyData> otherParty
         keys[i] = tmpKeys[i];//prg.getRandom32() % hashSize;
     }
 
-    polynomial.resize(size);
+    polySize = 5*log2(hashSize);
+    cout<<"polySize = "<<polySize<<endl;
+    polynomial.resize(polySize);
 
 
     firstEncValues.resize(tableRealSize, 0);
@@ -318,7 +327,9 @@ void ObliviousDictionaryQuery::readData(shared_ptr<ProtocolPartyData> otherParty
 
     otherParty->getChannel()->read((byte*)firstEncValues.data(), firstEncValues.size()*8);
     otherParty->getChannel()->read((byte*)secondEncValues.data(), secondEncValues.size()*8);
+    cout<<"before read polynomial"<<endl;
     otherParty->getChannel()->read((byte*)polynomial.data(), polynomial.size()*8);
+    cout<<"after read polynomial"<<endl;
 }
 
 void ObliviousDictionaryQuery::calcRealValues(){
