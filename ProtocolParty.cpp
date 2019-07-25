@@ -33,6 +33,11 @@ ProtocolParty::ProtocolParty(int argc, char* argv[]) : Protocol("ObliviousDictio
 
 }
 
+ProtocolParty::~ProtocolParty(){
+
+    delete timer;
+}
+
 void ProtocolParty::run() {
 
     for (iteration=0; iteration<times; iteration++){

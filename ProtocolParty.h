@@ -26,6 +26,7 @@ protected:
 public:
 
     ProtocolParty(int argc, char *argv[]);
+    ~ProtocolParty();
 
     void run() override;
 
