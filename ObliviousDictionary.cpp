@@ -67,13 +67,13 @@ void ObliviousDictionaryDB::fillTables(){
     for (int i=0; i<hashSize; i++){
 
 //            cout<<"key is "<<keys[i]<<endl;
-        auto pair = first.insert(keys[i]);
-//            first.insert(keys[i]);
+//        auto pair = first.insert(keys[i]);
+        first.insert(keys[i]);
         second.insert(keys[i]);
 
-        if (pair.second == false){
-            cout<<"key = "<<keys[i]<<" i = "<<i<<endl;
-        }
+//        if (pair.second == false){
+//            cout<<"key = "<<keys[i]<<" i = "<<i<<endl;
+//        }
     }
 
 
@@ -212,20 +212,25 @@ void ObliviousDictionaryDB::calcPolynomial(){
     polynomial.resize(polySize);
     cout<<"poly size =  "<<polynomial.size()<<endl;
     Poly::interpolateMersenne(polynomial, (ZpMersenneLongElement*)edgesForPolynomial.data(), (ZpMersenneLongElement*)valuesForPolynomial.data(), polySize);
-    
+
 }
 
 
 void ObliviousDictionaryDB::unpeeling(){
     cout<<"in unpeeling"<<endl;
     uint64_t firstPosition, secondPosition, poliVal, key;
+//    vector<uint64_t> polyVals(peelingCounter);
+//    Poly::evalMersenneMultipoint(polyVals, polynomial, peelingVector);
+
     while (peelingCounter > 0){
 //            cout<<"key = "<<key<<endl;
         key = peelingVector[--peelingCounter];
         firstPosition = first.bucket(key);
         secondPosition = second.bucket(key);
 
-        poliVal = getPolynomialValue(key);
+//        poliVal = getPolynomialValue(key);
+        Poly::evalMersenne((ZpMersenneLongElement*)&poliVal, polynomial, (ZpMersenneLongElement*)&key);
+//        poliVal = polyVals[peelingCounter];
         if (firstEncValues[firstPosition] == 0 && secondEncValues[secondPosition] == 0){
             firstEncValues[firstPosition] = prg.getRandom64()  >> 3;
 //                cout<<"set RANDOM value to first in bucket "<<firstPosition<<endl;
