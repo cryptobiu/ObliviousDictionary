@@ -9,7 +9,7 @@
 void Poly::evalMersenne(ZpMersenneLongElement* b, const vector<ZpMersenneLongElement>& coeff, ZpMersenneLongElement* a)
 // does a Horner evaluation
 {
-    ZpMersenneLongElement acc(0);
+    ZpMersenneLongElement acc;
 
     for (int i = coeff.size()-1; i >= 0; i--) {
         acc = acc*(*a);//mul(acc, acc, a);
@@ -26,7 +26,7 @@ void Poly::interpolateMersenne(vector<ZpMersenneLongElement>& coeff, const ZpMer
     int m = size;
 
     ZpMersenneLongElement one(1);
-    ZpMersenneLongElement zero(0);
+    ZpMersenneLongElement zero;
 
     ZpMersenneLongElement p(ZpMersenneLongElement::p);
 
