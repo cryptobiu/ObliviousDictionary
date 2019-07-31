@@ -7,10 +7,10 @@ INCLUDE_DIRECTORIES($ENV{HOME} $ENV{HOME}/libscapi/install/include xxHash
         $ENV{HOME}/libscapi/install/include/OTExtensionBristol )
 link_directories(/usr/ssl/lib/ $ENV{HOME}/libscapi/install/lib xxHash/cmake_unofficial)
 
-set(SOURCE_FILES main.cpp ObliviousDictionary.cpp Poly.cpp ProtocolParty.cpp)
+set(SOURCE_FILES main.cpp ObliviousDictionary.cpp Poly.cpp ProtocolParty.cpp Tools.cpp Hasher.cpp)
 
 
-add_executable(obliviousDictionary main.cpp ObliviousDictionary.cpp Poly.cpp ProtocolParty.cpp)
+add_executable(obliviousDictionary main.cpp ObliviousDictionary.cpp Poly.cpp ProtocolParty.cpp Tools.cpp Hasher.cpp)
 
 TARGET_LINK_LIBRARIES(obliviousDictionary ntl.a libxxhash.so
         $ENV{HOME}/libscapi/libscapi.a gmp

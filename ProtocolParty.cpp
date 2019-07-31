@@ -59,8 +59,10 @@ void ProtocolParty::run() {
 DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
 
     auto version = this->getParser().getValueByKey(arguments, "version");
+    auto tool = this->getParser().getValueByKey(arguments, "tool");
+
     if (version.compare("2Tables") == 0) {
-        dic = new ObliviousDictionaryDB2Tables(hashSize);
+        dic = new ObliviousDictionaryDB2Tables(hashSize, tool);
     }
 }
 
@@ -122,8 +124,10 @@ void DBParty::runOnline() {
 QueryParty::QueryParty(int argc, char *argv[]) : ProtocolParty(argc, argv){
 
     auto version = this->getParser().getValueByKey(arguments, "version");
+    auto tool = this->getParser().getValueByKey(arguments, "tool");
+
     if (version.compare("2Tables") == 0) {
-        dic = new ObliviousDictionaryQuery2Tables(hashSize);
+        dic = new ObliviousDictionaryQuery2Tables(hashSize, tool);
     }
 }
 

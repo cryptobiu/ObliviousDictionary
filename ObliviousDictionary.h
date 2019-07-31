@@ -4,69 +4,37 @@
 
 #ifndef BENNYPROJECT_OBLIVIOUSDICTIONARY_H
 #define BENNYPROJECT_OBLIVIOUSDICTIONARY_H
+
 #include <unordered_set>
 #include <unordered_map>
 #include <libscapi/include/primitives/Prg.hpp>
 #include <libscapi/include/comm/MPCCommunication.hpp>
-#include "xxhash.h"
 #include "Poly.h"
+#include "Hasher.h"
+
 #include <chrono>
-#include <math.h>       /* log2 */
+class Tools;
 
 using namespace std::chrono;
 
 using namespace std;
-
-class Hasher {
-private:
-
-    unsigned long long seed;
-
-public:
-
-    Hasher() {
-       seed = 0;
-    }
-
-    Hasher(unsigned long long seed) : seed(seed){    }
-
-    Hasher(const Hasher & hash){
-        seed = hash.seed;
-    }
-
-    size_t operator() (uint64_t const key) const
-    {
-        unsigned long long const hash = XXH64(&key, 8, seed);
-        return hash;
-    }
-
-};
 
 class ObliviousDictionary {
 protected:
     int hashSize;
     int tableRealSize;
 
-    uint64_t firstSeed, secondSeed;
-
     PrgFromOpenSSLAES prg;
     vector<uint64_t> keys;
 
-    unordered_set<uint64_t, Hasher> first;
-    unordered_set<uint64_t, Hasher> second;
-
-    vector<uint64_t> firstEncValues;
-    vector<uint64_t> secondEncValues;
-
-    vector<ZpMersenneLongElement> polynomial;
-    int polySize;
+    Tools* tool;
 
 public:
 
     ObliviousDictionary(int hashSize) : hashSize(hashSize){}
-
-    void createSets();
-
+//    virtual ~ObliviousDictionary(){
+//        delete tool;
+//    }
 };
 
 
@@ -80,6 +48,8 @@ protected:
 public:
 
     ObliviousDictionaryDB(int hashSize) : ObliviousDictionary(hashSize){}
+
+    virtual void createSets() = 0;
 
     virtual void fillTables() = 0;
 
@@ -99,6 +69,8 @@ public:
 
     ObliviousDictionaryQuery(int hashSize) : ObliviousDictionary(hashSize){}
 
+    virtual void createSets() = 0;
+
     virtual void readData(shared_ptr<ProtocolPartyData> otherParty) = 0;
 
     virtual void calcRealValues() = 0;
@@ -109,10 +81,74 @@ public:
 
 
 class ObliviousDictionaryDB2Tables : public ObliviousDictionaryDB {
+private:
+    uint64_t firstSeed, secondSeed;
+
+    unordered_set<uint64_t, Hasher> first;
+    unordered_set<uint64_t, Hasher> second;
+
+    vector<uint64_t> firstEncValues;
+    vector<uint64_t> secondEncValues;
+public:
+
+    ObliviousDictionaryDB2Tables(int size, string toolType);
+
+    void createSets();
+
+    void fillTables();
+
+    void peeling();
+
+    void generateExternalToolValues();
+
+    void unpeeling();
+
+    void checkOutput();
+
+    bool hasLoop();
+
+    void sendData(shared_ptr<ProtocolPartyData> otherParty);
+};
+
+class ObliviousDictionaryQuery2Tables : public ObliviousDictionaryQuery {
+private:
+    uint64_t firstSeed, secondSeed;
+
+    unordered_set<uint64_t, Hasher> first;
+    unordered_set<uint64_t, Hasher> second;
+
+    vector<uint64_t> firstEncValues;
+    vector<uint64_t> secondEncValues;
 
 public:
 
-    ObliviousDictionaryDB2Tables(int size);
+    ObliviousDictionaryQuery2Tables(int hashSize, string toolType);
+
+    void createSets();
+
+    void readData(shared_ptr<ProtocolPartyData> otherParty);
+
+    void calcRealValues();
+
+    void output();
+};
+
+
+class ObliviousDictionaryDB3Tables : public ObliviousDictionaryDB {
+private:
+    uint64_t firstSeed, secondSeed, thirdSeed;
+    unordered_set<uint64_t, Hasher> first;
+    unordered_set<uint64_t, Hasher> second;
+    unordered_set<uint64_t, Hasher> third;
+
+    vector<uint64_t> firstEncValues;
+    vector<uint64_t> secondEncValues;
+    vector<uint64_t> thirdEncValues;
+public:
+
+    ObliviousDictionaryDB3Tables(int size, string toolType);
+
+    void createSets();
 
     void fillTables();
 
@@ -131,10 +167,23 @@ public:
     void sendData(shared_ptr<ProtocolPartyData> otherParty);
 };
 
-class ObliviousDictionaryQuery2Tables : public ObliviousDictionaryQuery {
+class ObliviousDictionaryQuery3Tables : public ObliviousDictionaryQuery {
+private:
+    uint64_t firstSeed, secondSeed, thirdSeed;
+
+    unordered_set<uint64_t, Hasher> first;
+    unordered_set<uint64_t, Hasher> second;
+    unordered_set<uint64_t, Hasher> third;
+
+    vector<uint64_t> firstEncValues;
+    vector<uint64_t> secondEncValues;
+    vector<uint64_t> thirdEncValues;
+
 public:
 
-    ObliviousDictionaryQuery2Tables(int hashSize);
+    ObliviousDictionaryQuery3Tables(int hashSize, string toolType);
+
+    void createSets();
 
     void readData(shared_ptr<ProtocolPartyData> otherParty);
 
