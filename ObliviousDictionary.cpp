@@ -4,13 +4,6 @@
 
 #include "ObliviousDictionary.h"
 
-uint64_t ObliviousDictionary::getPolynomialValue(uint64_t key){
-    ZpMersenneLongElement b;
-    Poly::evalMersenne(&b, polynomial, (ZpMersenneLongElement*)&key);
-
-    return *(uint64_t*)&b;
-}
-
 void ObliviousDictionary::createSets(){
     first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
     second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
@@ -29,7 +22,7 @@ void ObliviousDictionary::createSets(){
     cout<<"new hashSize = "<<hashSize<<endl;
 }
 
-ObliviousDictionaryDB::ObliviousDictionaryDB(int size) : ObliviousDictionary(size) {
+ObliviousDictionaryDB2Tables::ObliviousDictionaryDB2Tables(int size) : ObliviousDictionaryDB(size) {
 
     auto key = prg.generateKey(128);
     prg.setKey(key);
@@ -62,7 +55,7 @@ ObliviousDictionaryDB::ObliviousDictionaryDB(int size) : ObliviousDictionary(siz
 
 }
 
-void ObliviousDictionaryDB::fillTables(){
+void ObliviousDictionaryDB2Tables::fillTables(){
 
     for (int i=0; i<hashSize; i++){
 
@@ -82,7 +75,7 @@ void ObliviousDictionaryDB::fillTables(){
 
 }
 
-void ObliviousDictionaryDB::peeling(){
+void ObliviousDictionaryDB2Tables::peeling(){
 
     peelingVector.resize(hashSize);
     peelingCounter = 0;
@@ -165,7 +158,11 @@ void ObliviousDictionaryDB::peeling(){
 
 }
 
-void ObliviousDictionaryDB::calcPolynomial(){
+void ObliviousDictionaryDB2Tables::generateExternalToolValues(){
+    calcPolynomial();
+}
+
+void ObliviousDictionaryDB2Tables::calcPolynomial(){
 
     polySize = 5*log2(hashSize);
     vector<uint64_t> edgesForPolynomial(polySize);
@@ -216,7 +213,7 @@ void ObliviousDictionaryDB::calcPolynomial(){
 }
 
 
-void ObliviousDictionaryDB::unpeeling(){
+void ObliviousDictionaryDB2Tables::unpeeling(){
     cout<<"in unpeeling"<<endl;
     uint64_t firstPosition, secondPosition, poliVal, key;
 //    vector<uint64_t> polyVals(peelingCounter);
@@ -246,7 +243,7 @@ void ObliviousDictionaryDB::unpeeling(){
     cout<<"peelingCounter = "<<peelingCounter<<endl;
 }
 
-void ObliviousDictionaryDB::checkOutput(){
+void ObliviousDictionaryDB2Tables::checkOutput(){
 
     uint64_t firstPosition, secondPosition, key, val, poliVal;
 
@@ -254,7 +251,8 @@ void ObliviousDictionaryDB::checkOutput(){
         key = keys[i];
         val = vals[key];
 
-        poliVal = getPolynomialValue(key);
+//        poliVal = getPolynomialValue(key);
+        Poly::evalMersenne((ZpMersenneLongElement*)&poliVal, polynomial, (ZpMersenneLongElement*)&key);
         firstPosition = first.bucket(key);
         secondPosition = second.bucket(key);
 
@@ -271,7 +269,7 @@ void ObliviousDictionaryDB::checkOutput(){
     }
 }
 
-bool ObliviousDictionaryDB::hasLoop(){
+bool ObliviousDictionaryDB2Tables::hasLoop(){
     for (int position = 0; position<tableRealSize; position++) {
         if (first.bucket_size(position) > 1) {
             return true;
@@ -281,7 +279,7 @@ bool ObliviousDictionaryDB::hasLoop(){
 }
 
 
-void ObliviousDictionaryDB::sendData(shared_ptr<ProtocolPartyData> otherParty){
+void ObliviousDictionaryDB2Tables::sendData(shared_ptr<ProtocolPartyData> otherParty){
 //TODO should be deleted!!
     otherParty->getChannel()->write((byte*)&firstSeed, 8);
     otherParty->getChannel()->write((byte*)&secondSeed, 8);
@@ -296,13 +294,13 @@ void ObliviousDictionaryDB::sendData(shared_ptr<ProtocolPartyData> otherParty){
     otherParty->getChannel()->write((byte*)polynomial.data(), polynomial.size()*8);
 }
 
-ObliviousDictionaryQuery::ObliviousDictionaryQuery(int hashSize) : ObliviousDictionary(hashSize){
+ObliviousDictionaryQuery2Tables::ObliviousDictionaryQuery2Tables(int hashSize) : ObliviousDictionaryQuery(hashSize){
 
     auto key = prg.generateKey(128);
     prg.setKey(key);
 }
 
-void ObliviousDictionaryQuery::readData(shared_ptr<ProtocolPartyData> otherParty){
+void ObliviousDictionaryQuery2Tables::readData(shared_ptr<ProtocolPartyData> otherParty){
 
 //TODO should be deleted!!
     otherParty->getChannel()->read((byte*)&firstSeed, 8);
@@ -337,18 +335,24 @@ void ObliviousDictionaryQuery::readData(shared_ptr<ProtocolPartyData> otherParty
     cout<<"after read polynomial"<<endl;
 }
 
-void ObliviousDictionaryQuery::calcRealValues(){
+void ObliviousDictionaryQuery2Tables::calcRealValues(){
 
     cout<<"vals:"<<endl;
     uint64_t firstPosition, secondPosition, val, poliVal;
     int size = keys.size();
     vector<uint64_t> vals(size);
     for (int i=0; i<size; i++){
-        poliVal = getPolynomialValue(keys[i]);
+//        poliVal = getPolynomialValue(keys[i]);
+        Poly::evalMersenne((ZpMersenneLongElement*)&poliVal, polynomial, (ZpMersenneLongElement*)&keys[i]);
         firstPosition = first.bucket(keys[i]);
         secondPosition = second.bucket(keys[i]);
 
         vals[i] = firstEncValues[firstPosition] ^ secondEncValues[secondPosition] ^ poliVal;
         cout<<"key = "<<keys[i]<<" val = "<<vals[i]<<endl;
     }
+
+}
+
+void ObliviousDictionaryQuery2Tables::output(){
+
 }

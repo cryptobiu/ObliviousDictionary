@@ -65,16 +65,13 @@ public:
 
     ObliviousDictionary(int hashSize) : hashSize(hashSize){}
 
-    uint64_t getPolynomialValue(uint64_t key);
-
     void createSets();
 
 };
 
 
-class ObliviousDictionaryDB : public ObliviousDictionary {
-
-private:
+class ObliviousDictionaryDB : public ObliviousDictionary{
+protected:
     unordered_map<uint64_t, uint64_t> vals;
 
     vector<uint64_t> peelingVector;
@@ -82,11 +79,46 @@ private:
 
 public:
 
-    ObliviousDictionaryDB(int size);
+    ObliviousDictionaryDB(int hashSize) : ObliviousDictionary(hashSize){}
+
+    virtual void fillTables() = 0;
+
+    virtual void peeling() = 0;
+
+    virtual void unpeeling() = 0;
+
+    virtual void generateExternalToolValues() = 0;
+
+    virtual void checkOutput() = 0;
+
+    virtual void sendData(shared_ptr<ProtocolPartyData> otherParty) = 0;
+};
+
+class ObliviousDictionaryQuery : public ObliviousDictionary{
+public:
+
+    ObliviousDictionaryQuery(int hashSize) : ObliviousDictionary(hashSize){}
+
+    virtual void readData(shared_ptr<ProtocolPartyData> otherParty) = 0;
+
+    virtual void calcRealValues() = 0;
+
+    virtual void output() = 0;
+};
+
+
+
+class ObliviousDictionaryDB2Tables : public ObliviousDictionaryDB {
+
+public:
+
+    ObliviousDictionaryDB2Tables(int size);
 
     void fillTables();
 
     void peeling();
+
+    void generateExternalToolValues();
 
     void calcPolynomial();
 
@@ -99,13 +131,15 @@ public:
     void sendData(shared_ptr<ProtocolPartyData> otherParty);
 };
 
-class ObliviousDictionaryQuery : public ObliviousDictionary {
+class ObliviousDictionaryQuery2Tables : public ObliviousDictionaryQuery {
 public:
 
-    ObliviousDictionaryQuery(int hashSize);
+    ObliviousDictionaryQuery2Tables(int hashSize);
 
     void readData(shared_ptr<ProtocolPartyData> otherParty);
 
     void calcRealValues();
+
+    void output();
 };
 #endif //BENNYPROJECT_OBLIVIOUSDICTIONARY_H

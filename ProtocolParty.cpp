@@ -58,7 +58,10 @@ void ProtocolParty::run() {
 
 DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
 
-    dic = new ObliviousDictionaryDB(hashSize);
+    auto version = this->getParser().getValueByKey(arguments, "version");
+    if (version.compare("2Tables") == 0) {
+        dic = new ObliviousDictionaryDB2Tables(hashSize);
+    }
 }
 
 DBParty::~DBParty(){
@@ -85,7 +88,7 @@ void DBParty::runOnline() {
     cout << "peeling took in milliseconds: " << duration << endl;
 
     t1 = high_resolution_clock::now();
-    dic->calcPolynomial();
+    dic->generateExternalToolValues();
     t2 = high_resolution_clock::now();
 
     duration = duration_cast<milliseconds>(t2-t1).count();
@@ -117,7 +120,11 @@ void DBParty::runOnline() {
 }
 
 QueryParty::QueryParty(int argc, char *argv[]) : ProtocolParty(argc, argv){
-    dic = new ObliviousDictionaryQuery(hashSize);
+
+    auto version = this->getParser().getValueByKey(arguments, "version");
+    if (version.compare("2Tables") == 0) {
+        dic = new ObliviousDictionaryQuery2Tables(hashSize);
+    }
 }
 
 QueryParty::~QueryParty() {
