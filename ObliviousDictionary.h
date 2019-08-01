@@ -144,6 +144,9 @@ private:
     vector<uint64_t> firstEncValues;
     vector<uint64_t> secondEncValues;
     vector<uint64_t> thirdEncValues;
+
+    void peelSecondSet(int position, uint64_t key, bool deleteFromThree, vector<uint64_t> * keysToDeleteFromThree, uint64_t originalKey);
+    void peelThirdSet(int position, vector<uint64_t> * keysToDeleteFromThree);
 public:
 
     ObliviousDictionaryDB3Tables(int size, string toolType);

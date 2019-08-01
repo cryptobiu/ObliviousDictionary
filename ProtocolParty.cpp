@@ -63,7 +63,10 @@ DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
 
     if (version.compare("2Tables") == 0) {
         dic = new ObliviousDictionaryDB2Tables(hashSize, tool);
+    } else if (version.compare("3Tables") == 0) {
+        dic = new ObliviousDictionaryDB3Tables(hashSize, tool);
     }
+
 }
 
 DBParty::~DBParty(){
@@ -128,6 +131,8 @@ QueryParty::QueryParty(int argc, char *argv[]) : ProtocolParty(argc, argv){
 
     if (version.compare("2Tables") == 0) {
         dic = new ObliviousDictionaryQuery2Tables(hashSize, tool);
+    } else if (version.compare("3Tables") == 0) {
+        dic = new ObliviousDictionaryQuery3Tables(hashSize, tool);
     }
 }
 
