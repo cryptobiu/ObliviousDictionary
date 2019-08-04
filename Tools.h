@@ -19,6 +19,7 @@ class Tools {
 public:
 
     Tools(){}
+    virtual void setHashSize(int hashSize) = 0;
     virtual void generateToolValues(vector<uint64_t> & edgesForPolynomial, vector<uint64_t> & valuesForPolynomial) = 0;
     virtual uint64_t getValue(uint64_t key) = 0;
     virtual byte* getSendableData() = 0;
@@ -30,13 +31,12 @@ class PolynomialTool : public Tools {
 private:
     int hashSize;
     vector<ZpMersenneLongElement> polynomial;
-    int polySize;
 
 public:
 
     PolynomialTool(int hashSize) : hashSize(hashSize){}
 
-
+    void setHashSize(int hashSize) override { this->hashSize = hashSize; }
     void generateToolValues(vector<uint64_t> & edgesForPolynomial, vector<uint64_t> & valuesForPolynomial) override;
     uint64_t getValue(uint64_t key) override;
 

@@ -269,10 +269,8 @@ void ObliviousDictionaryDB2Tables::checkOutput(){
         val = vals[key];
 
         poliVal = tool->getValue(key);
-//        Poly::evalMersenne((ZpMersenneLongElement*)&poliVal, polynomial, (ZpMersenneLongElement*)&key);
         firstPosition = first.bucket(key);
         secondPosition = second.bucket(key);
-
         if ((firstEncValues[firstPosition] ^ secondEncValues[secondPosition] ^ poliVal) == val) {
             if (i%100000 == 0)
                 cout<<"good value!!! val = "<<val<<endl;
@@ -302,6 +300,7 @@ void ObliviousDictionaryDB2Tables::sendData(shared_ptr<ProtocolPartyData> otherP
     otherParty->getChannel()->write((byte*)&secondSeed, 8);
     cout<<"firstSeed = "<<firstSeed<<endl;
     cout<<"secondSeed = "<<secondSeed<<endl;
+    cout<<"key size in bytes: "<<keys.size()*8<<endl;
     otherParty->getChannel()->write((byte*)keys.data(), keys.size()*8);
 //TODO until here
 
@@ -338,6 +337,8 @@ void ObliviousDictionaryQuery2Tables::createSets(){
     }
     hashSize = tableRealSize/1.2;
     cout<<"new hashSize = "<<hashSize<<endl;
+
+    tool->setHashSize(hashSize);
 }
 
 void ObliviousDictionaryQuery2Tables::readData(shared_ptr<ProtocolPartyData> otherParty){
@@ -368,10 +369,9 @@ void ObliviousDictionaryQuery2Tables::readData(shared_ptr<ProtocolPartyData> oth
 
     otherParty->getChannel()->read((byte*)firstEncValues.data(), firstEncValues.size()*8);
     otherParty->getChannel()->read((byte*)secondEncValues.data(), secondEncValues.size()*8);
-    cout<<"before read polynomial"<<endl;
+
     otherParty->getChannel()->read(polynomial, polySize);
     tool->setSendableData(polynomial);
-    cout<<"after read polynomial"<<endl;
 
     delete polynomial;
 }
@@ -384,10 +384,8 @@ void ObliviousDictionaryQuery2Tables::calcRealValues(){
     vector<uint64_t> vals(size);
     for (int i=0; i<size; i++){
         poliVal = tool->getValue(keys[i]);
-//        Poly::evalMersenne((ZpMersenneLongElement*)&poliVal, polynomial, (ZpMersenneLongElement*)&keys[i]);
         firstPosition = first.bucket(keys[i]);
         secondPosition = second.bucket(keys[i]);
-
         vals[i] = firstEncValues[firstPosition] ^ secondEncValues[secondPosition] ^ poliVal;
         cout<<"key = "<<keys[i]<<" val = "<<vals[i]<<endl;
     }
@@ -853,6 +851,8 @@ void ObliviousDictionaryQuery3Tables::createSets(){
     }
     hashSize = tableRealSize/1.2;
     cout<<"new hashSize = "<<hashSize<<endl;
+
+    tool->setHashSize(hashSize);
 }
 
 void ObliviousDictionaryQuery3Tables::readData(shared_ptr<ProtocolPartyData> otherParty){

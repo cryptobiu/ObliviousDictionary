@@ -27,6 +27,7 @@ byte* PolynomialTool::getSendableData(){
 void PolynomialTool::setSendableData(byte* data){
     int size = 5*log2(hashSize);
     polynomial.resize(size);
+    cout<<"in setSendableData. polySize = "<<size*8<<endl;
     memcpy(polynomial.data(), data, size*8);
 }
 
