@@ -18,6 +18,7 @@ protected:
     int times; //number of times to run the run function
     int iteration; //number of the current iteration
     int hashSize;
+    int reportStatistics = 0;
 
     Measurement *timer;
     shared_ptr<ProtocolPartyData> otherParty;

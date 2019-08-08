@@ -5,6 +5,39 @@
 #include "ObliviousDictionary.h"
 #include "Tools.h"
 
+
+void ObliviousDictionaryDB::init() {
+    vals.clear();
+    keys.clear();
+    peelingVector.clear();
+    peelingCounter = 0;
+
+    keys.resize(hashSize);
+    vals.reserve(hashSize);
+
+    for (int i=0; i < hashSize; i++){
+        keys[i] = prg.getRandom64() >> 3;
+        vals.insert({keys[i], prg.getRandom64() >> 3});
+    }
+
+    int numKeysToCheck = 10;
+    cout<<"keys to check with the other party"<<endl;
+    for (int i=0; i<numKeysToCheck; i++){
+        cout << "key = " << keys[i] << " val = " << vals[keys[i]] << endl;
+    }
+}
+
+
+void ObliviousDictionaryDB2Tables::init() {
+
+    firstSeed = prg.getRandom64();
+    secondSeed = prg.getRandom64();
+
+    ObliviousDictionaryDB::init();
+
+    first.clear();
+    second.clear();
+}
 ObliviousDictionaryDB2Tables::ObliviousDictionaryDB2Tables(int size, string toolType) : ObliviousDictionaryDB(size) {
 
     auto key = prg.generateKey(128);
@@ -40,19 +73,19 @@ ObliviousDictionaryDB2Tables::ObliviousDictionaryDB2Tables(int size, string tool
     secondEncValues.resize(tableRealSize, 0);
 
 
-    keys.resize(hashSize);
-    vals.reserve(hashSize);
-
-    for (int i=0; i<hashSize; i++){
-        keys[i] = prg.getRandom64() >> 3;
-        vals.insert({keys[i],prg.getRandom64()>>3});
-    }
-
-    int numKeysToCheck = 10;
-    cout<<"keys to check with the other party"<<endl;
-    for (int i=0; i<numKeysToCheck; i++){
-        cout<<"key = "<<keys[i]<<" val = "<<vals[keys[i]]<<endl;
-    }
+//    keys.resize(hashSize);
+//    vals.reserve(hashSize);
+//
+//    for (int i=0; i<hashSize; i++){
+//        keys[i] = prg.getRandom64() >> 3;
+//        vals.insert({keys[i],prg.getRandom64()>>3});
+//    }
+//
+//    int numKeysToCheck = 10;
+//    cout<<"keys to check with the other party"<<endl;
+//    for (int i=0; i<numKeysToCheck; i++){
+//        cout<<"key = "<<keys[i]<<" val = "<<vals[keys[i]]<<endl;
+//    }
 
     if (toolType.compare("poly") == 0){
         tool = new PolynomialTool(hashSize);
@@ -75,6 +108,8 @@ void ObliviousDictionaryDB2Tables::createSets(){
         tableRealSize = first.bucket_count();
         cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
+
+
     hashSize = tableRealSize/1.2;
     cout<<"new hashSize = "<<hashSize<<endl;
 }
@@ -213,7 +248,13 @@ void ObliviousDictionaryDB2Tables::generateExternalToolValues(){
 
     cout<<"circles size =  "<<polyCounter<<endl;
 
-    if (polyCounter < polySize){
+    if(reportStatistics==1) {
+
+        statisticsFile << polyCounter << ", \n";
+    }
+
+
+if (polyCounter < polySize){
         for (int i=polyCounter; i<polySize; i++){
             edgesForPolynomial[polyCounter] = peelingVector[i];
             valuesForPolynomial[polyCounter] = prg.getRandom64() >> 3;
@@ -335,6 +376,8 @@ void ObliviousDictionaryQuery2Tables::createSets(){
         tableRealSize = first.bucket_count();
         cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
+
+
     hashSize = tableRealSize/1.2;
     cout<<"new hashSize = "<<hashSize<<endl;
 
@@ -416,19 +459,7 @@ ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string tool
     thirdEncValues.resize(tableRealSize, 0);
 
 
-    keys.resize(hashSize);
-    vals.reserve(hashSize);
 
-    for (int i=0; i<hashSize; i++){
-        keys[i] = prg.getRandom64() >> 3;
-        vals.insert({keys[i],prg.getRandom64()>>3});
-    }
-
-    int numKeysToCheck = 10;
-    cout<<"keys to check with the other party"<<endl;
-    for (int i=0; i<numKeysToCheck; i++){
-        cout<<"key = "<<keys[i]<<" val = "<<vals[keys[i]]<<endl;
-    }
 
     if (toolType.compare("poly") == 0){
         tool = new PolynomialTool(hashSize);
@@ -437,10 +468,14 @@ ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string tool
 
 }
 
+
+
 void ObliviousDictionaryDB3Tables::createSets(){
     first = unordered_set<uint64_t, Hasher>(hashSize, Hasher(firstSeed));
     second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
     third = unordered_set<uint64_t, Hasher>(hashSize, Hasher(thirdSeed));
+
+
 
     tableRealSize = first.bucket_count();
     cout<<"tableRealSize = "<<tableRealSize<<endl;
@@ -453,6 +488,11 @@ void ObliviousDictionaryDB3Tables::createSets(){
         tableRealSize = first.bucket_count();
         cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
+
+//    first.max_load_factor(3);
+//    second.max_load_factor(3);
+//    third.max_load_factor(3);
+
     hashSize = tableRealSize/1.2;
     cout<<"new hashSize = "<<hashSize<<endl;
 }
@@ -838,6 +878,8 @@ void ObliviousDictionaryQuery3Tables::createSets(){
     second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
     third = unordered_set<uint64_t, Hasher>(hashSize, Hasher(thirdSeed));
 
+
+
     tableRealSize = first.bucket_count();
     cout<<"tableRealSize = "<<tableRealSize<<endl;
 
@@ -849,6 +891,10 @@ void ObliviousDictionaryQuery3Tables::createSets(){
         tableRealSize = first.bucket_count();
         cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
+
+//    first.max_load_factor(3);
+//    second.max_load_factor(3);
+//    third.max_load_factor(3);
     hashSize = tableRealSize/1.2;
     cout<<"new hashSize = "<<hashSize<<endl;
 

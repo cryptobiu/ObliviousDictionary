@@ -44,11 +44,19 @@ protected:
 
     vector<uint64_t> peelingVector;
     int peelingCounter;
+    int reportStatistics=0;
+    ofstream statisticsFile;
 
 public:
 
-    ObliviousDictionaryDB(int hashSize) : ObliviousDictionary(hashSize){}
+    ObliviousDictionaryDB(int hashSize) : ObliviousDictionary(hashSize) {};
 
+    virtual ~ObliviousDictionaryDB() {
+        if (reportStatistics == 1) {
+
+            statisticsFile.close();
+        }
+    };
     virtual void createSets() = 0;
 
     virtual void fillTables() = 0;
@@ -62,6 +70,17 @@ public:
     virtual void checkOutput() = 0;
 
     virtual void sendData(shared_ptr<ProtocolPartyData> otherParty) = 0;
+
+    void setReportStatstics(int flag){
+        reportStatistics = flag;
+        if (reportStatistics == 1) {
+
+            cout<<"statistics file created"<<endl;
+            statisticsFile.open("statistics.csv");
+            statisticsFile << "-------------Statistics-----------.\n";
+        }};
+
+    virtual void init();
 };
 
 class ObliviousDictionaryQuery : public ObliviousDictionary{
@@ -108,6 +127,8 @@ public:
     bool hasLoop();
 
     void sendData(shared_ptr<ProtocolPartyData> otherParty);
+
+    virtual void init();
 };
 
 class ObliviousDictionaryQuery2Tables : public ObliviousDictionaryQuery {
@@ -168,6 +189,8 @@ public:
     bool hasLoop();
 
     void sendData(shared_ptr<ProtocolPartyData> otherParty);
+
+
 };
 
 class ObliviousDictionaryQuery3Tables : public ObliviousDictionaryQuery {
