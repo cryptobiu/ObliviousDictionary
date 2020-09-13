@@ -24,14 +24,16 @@ protected:
     int hashSize;
     int tableRealSize;
 
-    PrgFromOpenSSLAES prg;
+    PrgFromOpenSSLAES* prg;
     vector<uint64_t> keys;
 
     Tools* tool;
 
 public:
 
-    ObliviousDictionary(int hashSize) : hashSize(hashSize){}
+    ObliviousDictionary(int hashSize) : hashSize(hashSize){
+        prg = new PrgFromOpenSSLAES(hashSize*100);
+    }
 //    virtual ~ObliviousDictionary(){
 //        delete tool;
 //    }
