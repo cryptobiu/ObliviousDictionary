@@ -21,6 +21,8 @@ ProtocolParty::ProtocolParty(int argc, char* argv[]) : Protocol("ObliviousDictio
     reportStatistics = stoi(this->getParser().getValueByKey(arguments, "reportStatistics"));
 
 
+
+
     if(reportStatistics==0) {
     otherParty = comm.setCommunication(io_service, partyId, 2, partiesFile)[0];
 
@@ -67,10 +69,15 @@ DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
     auto version = this->getParser().getValueByKey(arguments, "version");
     auto tool = this->getParser().getValueByKey(arguments, "tool");
 
+    auto batchSize = stoi(this->getParser().getValueByKey(arguments, "batchSize"));
+
+    auto processId = stoi(this->getParser().getValueByKey(arguments, "processId"));
+
+
     if (version.compare("2Tables") == 0) {
         dic = new ObliviousDictionaryDB2Tables(hashSize, tool);
     } else if (version.compare("3Tables") == 0) {
-        dic = new ObliviousDictionaryDB3Tables(hashSize, tool);
+        dic = new ObliviousDictionaryDB3Tables(hashSize, tool,batchSize, processId);
     }
     dic->setReportStatstics(reportStatistics);
 
@@ -81,60 +88,62 @@ DBParty::~DBParty(){
 }
 
 void DBParty::runOnline() {
-for (int i=0;i<1; i++) {
-    dic->init();
-
-    auto start = high_resolution_clock::now();
-    auto t1 = high_resolution_clock::now();
-
-    dic->fillTables();
-    auto t2 = high_resolution_clock::now();
-
-    auto duration = duration_cast<milliseconds>(t2 - t1).count();
-    cout << "fillTables took in milliseconds: " << duration << endl;
-
-    t1 = high_resolution_clock::now();
-    dic->peeling();
-
-    t2 = high_resolution_clock::now();
-
-    duration = duration_cast<milliseconds>(t2 - t1).count();
-    cout << "peeling took in milliseconds: " << duration << endl;
 
 
-    if (reportStatistics == 0) {
-        t1 = high_resolution_clock::now();
-        dic->generateExternalToolValues();
-        t2 = high_resolution_clock::now();
+        dic->init();
 
-        duration = duration_cast<milliseconds>(t2 - t1).count();
-        cout << "calcPolinomial took in milliseconds: " << duration << endl;
+        auto start = high_resolution_clock::now();
+        auto t1 = high_resolution_clock::now();
 
+        dic->fillTables();
+        auto t2 = high_resolution_clock::now();
+
+        auto duration = duration_cast<milliseconds>(t2 - t1).count();
+        cout << "fillTables took in milliseconds: " << duration << endl;
 
         t1 = high_resolution_clock::now();
-        dic->unpeeling();
+        dic->peeling();
 
         t2 = high_resolution_clock::now();
 
         duration = duration_cast<milliseconds>(t2 - t1).count();
-        cout << "unpeeling took in milliseconds: " << duration << endl;
+        cout << "peeling took in milliseconds: " << duration << endl;
 
-        t1 = high_resolution_clock::now();
-        dic->sendData(otherParty);
+        if (reportStatistics == 1)
+            dic->updateIteration(iteration);
 
-        t2 = high_resolution_clock::now();
+        if (reportStatistics == 0) {
+            t1 = high_resolution_clock::now();
+            dic->generateExternalToolValues();
+            t2 = high_resolution_clock::now();
 
-        duration = duration_cast<milliseconds>(t2 - t1).count();
-        cout << "send took in milliseconds: " << duration << endl;
+            duration = duration_cast<milliseconds>(t2 - t1).count();
+            cout << "calcPolinomial took in milliseconds: " << duration << endl;
 
-        auto end = high_resolution_clock::now();
 
-        duration = duration_cast<milliseconds>(end - start).count();
-        cout << "all protocol took in milliseconds: " << duration << endl;
+            t1 = high_resolution_clock::now();
+            dic->unpeeling();
 
-        dic->checkOutput();
-    }
-}
+            t2 = high_resolution_clock::now();
+
+            duration = duration_cast<milliseconds>(t2 - t1).count();
+            cout << "unpeeling took in milliseconds: " << duration << endl;
+
+            t1 = high_resolution_clock::now();
+            dic->sendData(otherParty);
+
+            t2 = high_resolution_clock::now();
+
+            duration = duration_cast<milliseconds>(t2 - t1).count();
+            cout << "send took in milliseconds: " << duration << endl;
+
+            auto end = high_resolution_clock::now();
+
+            duration = duration_cast<milliseconds>(end - start).count();
+            cout << "all protocol took in milliseconds: " << duration << endl;
+
+            dic->checkOutput();
+        }
 }
 
 QueryParty::QueryParty(int argc, char *argv[]) : ProtocolParty(argc, argv){

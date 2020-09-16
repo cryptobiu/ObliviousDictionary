@@ -7,7 +7,7 @@
 #include <queue>
 
 #define print_timings true
-#define print false
+#define print true
 
 void ObliviousDictionaryDB::init() {
     vals.clear();
@@ -478,8 +478,12 @@ void ObliviousDictionaryQuery2Tables::output(){
 }
 
 
-ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string toolType) : ObliviousDictionaryDB(size) {
+ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId) : ObliviousDictionaryDB(size) {
 
+    this->batchSize = batchSize;
+    this->processId = processId;
+
+    circleVec.resize(batchSize);
     auto key = prg->generateKey(128);
     prg->setKey(key);
 
@@ -508,12 +512,24 @@ ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string tool
 
 }
 
+void ObliviousDictionaryDB3Tables::init() {
+
+    firstSeed = prg->getRandom64();
+    secondSeed = prg->getRandom64();
+    thirdSeed = prg->getRandom64();
+
+    ObliviousDictionaryDB::init();
+
+    first.clear();
+    second.clear();
+    third.clear();
+}
 
 
 void ObliviousDictionaryDB3Tables::createSets(){
-    first = unordered_set<uint64_t, Hasher>(hashSize*0.42, Hasher(firstSeed));
-    second = unordered_set<uint64_t, Hasher>(hashSize*0.42, Hasher(secondSeed));
-    third = unordered_set<uint64_t, Hasher>(hashSize*0.42, Hasher(thirdSeed));
+    first = unordered_set<uint64_t, Hasher>(hashSize*1.24/3.0, Hasher(firstSeed));
+    second = unordered_set<uint64_t, Hasher>(hashSize*1.24/3.0, Hasher(secondSeed));
+    third = unordered_set<uint64_t, Hasher>(hashSize*1.24/3.0, Hasher(thirdSeed));
 
 
 
@@ -521,7 +537,7 @@ void ObliviousDictionaryDB3Tables::createSets(){
     if(print)
         cout<<"tableRealSize = "<<tableRealSize<<endl;
 
-    while(tableRealSize*3/1.25 < hashSize){
+    while(tableRealSize*3.0/1.24 < hashSize){
         first = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(firstSeed));
         second = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(secondSeed));
         third = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(thirdSeed));
@@ -531,11 +547,11 @@ void ObliviousDictionaryDB3Tables::createSets(){
             cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
 
-    first.max_load_factor(3);
-    second.max_load_factor(3);
-    third.max_load_factor(3);
+    first.max_load_factor(7);
+    second.max_load_factor(7);
+    third.max_load_factor(7);
 
-    hashSize = tableRealSize*3/1.25;
+    hashSize = tableRealSize*3.0/1.24;
 
     if(print)
         cout<<"new hashSize = "<<hashSize<<endl;
@@ -943,10 +959,10 @@ void ObliviousDictionaryDB3Tables::peeling() {
         cout << "hashSize : " << hashSize << endl;
     }
 
-    if(reportStatistics==1) {
-
-        statisticsFile << "" << ", \n";
-    }
+//    if(reportStatistics==1) {
+//
+//        statisticsFile << "tesintg" << ", \n";
+//    }
 
 }
 
@@ -982,6 +998,36 @@ void ObliviousDictionaryDB3Tables::handleQueue(queue<int> &queueMain, unordered_
 }
 
 
+void ObliviousDictionaryDB3Tables::updateIteration(int iteration){
+
+
+    circleVec[iteration%batchSize] = hashSize - peelingCounter;
+
+    //write to file
+    if(iteration%batchSize==batchSize-1){
+
+        int greaterThan10 = 0;
+        int greaterThan40 = 0;
+        int greaterThan100 = 0;
+
+        for(int i=0; i<batchSize; i++){
+
+            statisticsFile<<circleVec[i] << ",\n";
+
+            if(circleVec[i]>100)
+                greaterThan100++;
+            else if(circleVec[i]>40)
+                greaterThan40++;
+            else if(circleVec[i]>10)
+                greaterThan10++;
+        }
+
+        statisticsFile<<flush;
+
+        groupedStatisticsFile<<greaterThan100 << "," << greaterThan40 << ","<< greaterThan10<< endl;
+
+    }
+}
 void ObliviousDictionaryDB3Tables::generateExternalToolValues(){
 //    cout<<"in generate"<<endl;
     int polySize = 5*log2(hashSize);
@@ -1166,9 +1212,9 @@ ObliviousDictionaryQuery3Tables::ObliviousDictionaryQuery3Tables(int hashSize, s
 }
 
 void ObliviousDictionaryQuery3Tables::createSets(){
-    first = unordered_set<uint64_t, Hasher>(hashSize*0.42, Hasher(firstSeed));
-    second = unordered_set<uint64_t, Hasher>(hashSize*0.42, Hasher(secondSeed));
-    third = unordered_set<uint64_t, Hasher>(hashSize*0.42, Hasher(thirdSeed));
+    first = unordered_set<uint64_t, Hasher>(hashSize*(1.25/3.0), Hasher(firstSeed));
+    second = unordered_set<uint64_t, Hasher>(hashSize*(1.25/3.0), Hasher(secondSeed));
+    third = unordered_set<uint64_t, Hasher>(hashSize*(1.25/3.0), Hasher(thirdSeed));
 
 
 
@@ -1189,7 +1235,7 @@ void ObliviousDictionaryQuery3Tables::createSets(){
     first.max_load_factor(3);
     second.max_load_factor(3);
     third.max_load_factor(3);
-    hashSize = tableRealSize*3/1.25;
+    hashSize = tableRealSize*3.0/1.25;
     if(print)
         cout<<"new hashSize = "<<hashSize<<endl;
 
@@ -1263,6 +1309,7 @@ void ObliviousDictionaryQuery3Tables::calcRealValues(){
     }
 
 }
+
 
 void ObliviousDictionaryQuery3Tables::output(){
 

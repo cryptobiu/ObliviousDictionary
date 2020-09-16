@@ -50,6 +50,11 @@ protected:
     int peelingCounter;
     int reportStatistics=0;
     ofstream statisticsFile;
+    ofstream groupedStatisticsFile;
+    int processId;
+    int batchSize;
+    vector<int> circleVec;
+
 
 public:
 
@@ -58,7 +63,10 @@ public:
     virtual ~ObliviousDictionaryDB() {
         if (reportStatistics == 1) {
 
+
             statisticsFile.close();
+            groupedStatisticsFile.close();
+
         }
     };
     virtual void createSets() = 0;
@@ -80,10 +88,18 @@ public:
         if (reportStatistics == 1) {
 
             cout<<"statistics file created"<<endl;
-            statisticsFile.open("statistics.csv");
-            statisticsFile << "-------------Statistics-----------.\n";
+            statisticsFile.open("statisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashSize) +
+            "BatchSize"+ to_string(batchSize)+  ".csv");
+            groupedStatisticsFile.open("groupedStatisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashSize) +
+                                       "BatchSize"+ to_string(batchSize)+  ".csv");
+
+            groupedStatisticsFile<<"Greater Than 100 ,  Greater than 40 , Greater than 10"<< endl;
+
+            circleVec.resize(batchSize);
         }};
 
+
+    virtual void updateIteration(int iteration)=0;
     virtual void init();
 };
 
@@ -133,6 +149,8 @@ public:
     void sendData(shared_ptr<ProtocolPartyData> otherParty);
 
     virtual void init();
+
+    void updateIteration(int iteration){}
 };
 
 class ObliviousDictionaryQuery2Tables : public ObliviousDictionaryQuery {
@@ -144,6 +162,7 @@ private:
 
     vector<uint64_t> firstEncValues;
     vector<uint64_t> secondEncValues;
+
 
 public:
 
@@ -174,7 +193,7 @@ private:
     void peelThirdSet(int position, vector<uint64_t> * keysToDeleteFromThree);
 public:
 
-    ObliviousDictionaryDB3Tables(int size, string toolType);
+    ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId);
 
     void createSets();
 
@@ -201,7 +220,10 @@ public:
                 queue<int> &queueOther1, unordered_set<uint64_t, Hasher> &other1,
                 queue<int> &queueOther2,unordered_set<uint64_t, Hasher> &other2);
 
-    };
+    void updateIteration(int iteration);
+
+    virtual void init();
+};
 
 class ObliviousDictionaryQuery3Tables : public ObliviousDictionaryQuery {
 private:

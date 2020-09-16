@@ -12,7 +12,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1e0fbef0-5b68-4eb0-bfef-77bafbb796a6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObliviousDictionary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ObliviousDictionary.cpp" afterDir="false" />
@@ -45,7 +44,7 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
   <component name="RunManager">
-    <configuration name="obliviousDictionary" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-partyID 0 -internalIterationsNumber 1 -hashSize 1000000 -partiesFile Parties.txt -reportStatistics 1 -version 3Tables -tool poly" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="obliviousDictionary" TARGET_NAME="obliviousDictionary" CONFIG_NAME="Default" RUN_TARGET_PROJECT_NAME="obliviousDictionary" RUN_TARGET_NAME="obliviousDictionary">
+    <configuration name="obliviousDictionary" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-partyID 0 -internalIterationsNumber 100 -hashSize 1000 -partiesFile Parties.txt -reportStatistics 1 -version 3Tables -tool poly -batchSize 20 -processId 0" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="obliviousDictionary" TARGET_NAME="obliviousDictionary" CONFIG_NAME="Default" RUN_TARGET_PROJECT_NAME="obliviousDictionary" RUN_TARGET_NAME="obliviousDictionary">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -64,7 +63,7 @@
       <workItem from="1562837972518" duration="3203000" />
       <workItem from="1563348270176" duration="41351000" />
       <workItem from="1599725134903" duration="21238000" />
-      <workItem from="1600075979934" duration="3692000" />
+      <workItem from="1600075979934" duration="22351000" />
     </task>
     <servers />
   </component>
@@ -72,46 +71,54 @@
     <option name="version" value="2" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1600232953118">
+    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1600262241781">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1299.741@67.27.1299.741" timestamp="1600232953118" />
-    <state width="479" height="506" key="DebuggerActiveHint" timestamp="1600001833655">
+    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1299.741@67.27.1299.741" timestamp="1600262241781" />
+    <state width="495" height="506" key="DebuggerActiveHint" timestamp="1600261039521">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="479" height="506" key="DebuggerActiveHint/67.27.1299.741@67.27.1299.741" timestamp="1600001833654" />
-    <state width="1253" height="189" key="GridCell.Tab.0.bottom" timestamp="1600235798296">
+    <state width="495" height="506" key="DebuggerActiveHint/67.27.1299.741@67.27.1299.741" timestamp="1600261039521" />
+    <state width="1253" height="110" key="GridCell.Tab.0.bottom" timestamp="1600261355774">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="189" key="GridCell.Tab.0.bottom/67.27.1299.741@67.27.1299.741" timestamp="1600235798296" />
-    <state width="1253" height="189" key="GridCell.Tab.0.center" timestamp="1600235798295">
+    <state width="1253" height="110" key="GridCell.Tab.0.bottom/67.27.1299.741@67.27.1299.741" timestamp="1600261355774" />
+    <state width="1253" height="110" key="GridCell.Tab.0.center" timestamp="1600261355773">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="189" key="GridCell.Tab.0.center/67.27.1299.741@67.27.1299.741" timestamp="1600235798295" />
-    <state width="1253" height="189" key="GridCell.Tab.0.left" timestamp="1600235798295">
+    <state width="1253" height="110" key="GridCell.Tab.0.center/67.27.1299.741@67.27.1299.741" timestamp="1600261355773" />
+    <state width="1253" height="110" key="GridCell.Tab.0.left" timestamp="1600261355773">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="189" key="GridCell.Tab.0.left/67.27.1299.741@67.27.1299.741" timestamp="1600235798295" />
-    <state width="1253" height="189" key="GridCell.Tab.0.right" timestamp="1600235798296">
+    <state width="1253" height="110" key="GridCell.Tab.0.left/67.27.1299.741@67.27.1299.741" timestamp="1600261355773" />
+    <state width="1253" height="110" key="GridCell.Tab.0.right" timestamp="1600261355774">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="189" key="GridCell.Tab.0.right/67.27.1299.741@67.27.1299.741" timestamp="1600235798296" />
-    <state width="1253" height="67" key="GridCell.Tab.1.bottom" timestamp="1600075411439">
+    <state width="1253" height="110" key="GridCell.Tab.0.right/67.27.1299.741@67.27.1299.741" timestamp="1600261355774" />
+    <state width="1253" height="137" key="GridCell.Tab.1.bottom" timestamp="1600261130903">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="67" key="GridCell.Tab.1.bottom/67.27.1299.741@67.27.1299.741" timestamp="1600075411439" />
-    <state width="1253" height="67" key="GridCell.Tab.1.center" timestamp="1600075411439">
+    <state width="1253" height="137" key="GridCell.Tab.1.bottom/67.27.1299.741@67.27.1299.741" timestamp="1600261130903" />
+    <state width="1253" height="137" key="GridCell.Tab.1.center" timestamp="1600261130902">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="67" key="GridCell.Tab.1.center/67.27.1299.741@67.27.1299.741" timestamp="1600075411439" />
-    <state width="1253" height="67" key="GridCell.Tab.1.left" timestamp="1600075411438">
+    <state width="1253" height="137" key="GridCell.Tab.1.center/67.27.1299.741@67.27.1299.741" timestamp="1600261130902" />
+    <state width="1253" height="137" key="GridCell.Tab.1.left" timestamp="1600261130902">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="67" key="GridCell.Tab.1.left/67.27.1299.741@67.27.1299.741" timestamp="1600075411438" />
-    <state width="1253" height="67" key="GridCell.Tab.1.right" timestamp="1600075411439">
+    <state width="1253" height="137" key="GridCell.Tab.1.left/67.27.1299.741@67.27.1299.741" timestamp="1600261130902" />
+    <state width="1253" height="137" key="GridCell.Tab.1.right" timestamp="1600261130902">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="67" key="GridCell.Tab.1.right/67.27.1299.741@67.27.1299.741" timestamp="1600075411439" />
+    <state width="1253" height="137" key="GridCell.Tab.1.right/67.27.1299.741@67.27.1299.741" timestamp="1600261130902" />
+    <state x="239" y="27" width="944" height="741" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1600258071613">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="239" y="27" width="944" height="741" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/67.27.1299.741@67.27.1299.741" timestamp="1600258071613" />
+    <state x="244" y="115" width="935" height="562" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1600249546624">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="244" y="115" width="935" height="562" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/67.27.1299.741@67.27.1299.741" timestamp="1600249546624" />
     <state x="495" y="182" width="432" height="425" key="refactoring.ChangeSignatureDialog" timestamp="1599998494806">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
@@ -120,40 +127,46 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/main.cpp</url>
           <line>14</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/obliviousDictionary.h</url>
           <line>63</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/obliviousDictionary.h</url>
           <line>89</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>812</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>919</line>
+          <line>935</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+        <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>923</line>
+          <line>939</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <condition expression="bucketInd&gt;10000" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>957</line>
-          <option name="timeStamp" value="8" />
+          <line>904</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
+          <line>1003</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
+          <line>1008</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
