@@ -13,6 +13,8 @@
 #include "Hasher.h"
 
 #include <chrono>
+#include <queue>
+
 class Tools;
 
 using namespace std::chrono;
@@ -180,6 +182,8 @@ public:
 
     void peeling();
 
+    void peeling2();
+
     void generateExternalToolValues();
 
     void calcPolynomial();
@@ -193,7 +197,11 @@ public:
     void sendData(shared_ptr<ProtocolPartyData> otherParty);
 
 
-};
+    void handleQueue(queue<int> &queueMain, unordered_set<uint64_t, Hasher> &main,
+                queue<int> &queueOther1, unordered_set<uint64_t, Hasher> &other1,
+                queue<int> &queueOther2,unordered_set<uint64_t, Hasher> &other2);
+
+    };
 
 class ObliviousDictionaryQuery3Tables : public ObliviousDictionaryQuery {
 private:

@@ -81,7 +81,7 @@ DBParty::~DBParty(){
 }
 
 void DBParty::runOnline() {
-
+for (int i=0;i<1; i++) {
     dic->init();
 
     auto start = high_resolution_clock::now();
@@ -90,7 +90,7 @@ void DBParty::runOnline() {
     dic->fillTables();
     auto t2 = high_resolution_clock::now();
 
-    auto duration = duration_cast<milliseconds>(t2-t1).count();
+    auto duration = duration_cast<milliseconds>(t2 - t1).count();
     cout << "fillTables took in milliseconds: " << duration << endl;
 
     t1 = high_resolution_clock::now();
@@ -98,17 +98,19 @@ void DBParty::runOnline() {
 
     t2 = high_resolution_clock::now();
 
-    duration = duration_cast<milliseconds>(t2-t1).count();
+    duration = duration_cast<milliseconds>(t2 - t1).count();
     cout << "peeling took in milliseconds: " << duration << endl;
 
-    t1 = high_resolution_clock::now();
-    dic->generateExternalToolValues();
-    t2 = high_resolution_clock::now();
 
-    duration = duration_cast<milliseconds>(t2-t1).count();
-    cout << "calcPolinomial took in milliseconds: " << duration << endl;
+    if (reportStatistics == 0) {
+        t1 = high_resolution_clock::now();
+        dic->generateExternalToolValues();
+        t2 = high_resolution_clock::now();
 
-    if(reportStatistics==0) {
+        duration = duration_cast<milliseconds>(t2 - t1).count();
+        cout << "calcPolinomial took in milliseconds: " << duration << endl;
+
+
         t1 = high_resolution_clock::now();
         dic->unpeeling();
 
@@ -132,7 +134,7 @@ void DBParty::runOnline() {
 
         dic->checkOutput();
     }
-
+}
 }
 
 QueryParty::QueryParty(int argc, char *argv[]) : ProtocolParty(argc, argv){

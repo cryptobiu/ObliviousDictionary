@@ -4,7 +4,10 @@
 
 #include "ObliviousDictionary.h"
 #include "Tools.h"
+#include <queue>
 
+#define print_timings true
+#define print false
 
 void ObliviousDictionaryDB::init() {
     vals.clear();
@@ -20,10 +23,12 @@ void ObliviousDictionaryDB::init() {
         vals.insert({keys[i], prg->getRandom64() >> 3});
     }
 
-    int numKeysToCheck = 10;
-    cout<<"keys to check with the other party"<<endl;
-    for (int i=0; i<numKeysToCheck; i++){
-        cout << "key = " << keys[i] << " val = " << vals[keys[i]] << endl;
+    if(print) {
+        int numKeysToCheck = 10;
+        cout << "keys to check with the other party" << endl;
+        for (int i = 0; i < numKeysToCheck; i++) {
+            cout << "key = " << keys[i] << " val = " << vals[keys[i]] << endl;
+        }
     }
 }
 
@@ -51,23 +56,28 @@ ObliviousDictionaryDB2Tables::ObliviousDictionaryDB2Tables(int size, string tool
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(end-start).count();
 
-    cout << "time in milliseconds for create sets: " << duration << endl;
+    if(print_timings)
+        cout << "time in milliseconds for create sets: " << duration << endl;
 
     start = high_resolution_clock::now();
     first.insert(1);
     end = high_resolution_clock::now();
     duration = duration_cast<milliseconds>(end-start).count();
-    cout << "time in milliseconds for insert first element: " << duration << endl;
+    if(print_timings)
+        cout << "time in milliseconds for insert first element: " << duration << endl;
 
     start = high_resolution_clock::now();
     first.erase(1);
     end = high_resolution_clock::now();
     duration = duration_cast<milliseconds>(end-start).count();
-    cout << "time in milliseconds for erase first element: " << duration << endl;
+    if(print_timings)
+        cout << "time in milliseconds for erase first element: " << duration << endl;
 
-    cout<<"after create sets"<<endl;
-    cout<<"tableRealSize = "<<tableRealSize<<endl;
-    cout<<"hashSize = "<<hashSize<<endl;
+    if(print) {
+        cout << "after create sets" << endl;
+        cout << "tableRealSize = " << tableRealSize << endl;
+        cout << "hashSize = " << hashSize << endl;
+    }
 
     firstEncValues.resize(tableRealSize, 0);
     secondEncValues.resize(tableRealSize, 0);
@@ -99,18 +109,21 @@ void ObliviousDictionaryDB2Tables::createSets(){
     second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
 
     tableRealSize = first.bucket_count();
-    cout<<"tableRealSize = "<<tableRealSize<<endl;
+    if(print)
+        cout<<"tableRealSize = "<<tableRealSize<<endl;
 
     while(tableRealSize/1.2 < hashSize){
         first = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(firstSeed));
         second = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(secondSeed));
 
         tableRealSize = first.bucket_count();
-        cout<<"tableRealSize = "<<tableRealSize<<endl;
+        if(print)
+            cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
 
     hashSize = tableRealSize/1.2;
-    cout<<"new hashSize = "<<hashSize<<endl;
+    if(print)
+        cout<<"new hashSize = "<<hashSize<<endl;
 }
 
 void ObliviousDictionaryDB2Tables::fillTables(){
@@ -128,9 +141,10 @@ void ObliviousDictionaryDB2Tables::fillTables(){
     }
 
 
-    cout<<"first set contains "<<first.size()<<endl;
-    cout<<"second set contains "<<second.size()<<endl;
-
+    if(print) {
+        cout << "first set contains " << first.size() << endl;
+        cout << "second set contains " << second.size() << endl;
+    }
 }
 
 void ObliviousDictionaryDB2Tables::peeling(){
@@ -155,7 +169,8 @@ void ObliviousDictionaryDB2Tables::peeling(){
     auto t2 = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(t2-t1).count();
 
-    cout << "time in milliseconds for first loop: " << duration << endl;
+    if(print_timings)
+        cout << "time in milliseconds for first loop: " << duration << endl;
 
     t1 = high_resolution_clock::now();
     //goes on the second hash
@@ -206,13 +221,15 @@ void ObliviousDictionaryDB2Tables::peeling(){
     t2 = high_resolution_clock::now();
     duration = duration_cast<milliseconds>(t2-t1).count();
 
-    cout << "time in milliseconds for second loop: " << duration << endl;
+    if(print_timings)
+        cout << "time in milliseconds for second loop: " << duration << endl;
 
     if (hasLoop()){
         cout << "remain loops!!!" << endl;
     }
 
-    cout<<"peelingCounter = "<<peelingCounter<<endl;
+    if(print)
+        cout<<"peelingCounter = "<<peelingCounter<<endl;
 
 }
 
@@ -245,7 +262,8 @@ void ObliviousDictionaryDB2Tables::generateExternalToolValues(){
         }
     }
 
-    cout<<"circles size =  "<<polyCounter<<endl;
+    if(print)
+        cout<<"circles size =  "<<polyCounter<<endl;
 
     if(reportStatistics==1) {
 
@@ -271,7 +289,9 @@ if (polyCounter < polySize){
 
 
 void ObliviousDictionaryDB2Tables::unpeeling(){
-    cout<<"in unpeeling"<<endl;
+    if(print)
+        cout<<"in unpeeling"<<endl;
+
     uint64_t firstPosition, secondPosition, poliVal, key;
 //    vector<uint64_t> polyVals(peelingCounter);
 //    Poly::evalMersenneMultipoint(polyVals, polynomial, peelingVector);
@@ -297,7 +317,8 @@ void ObliviousDictionaryDB2Tables::unpeeling(){
 //                cout<<"set value to second in bucket "<<secondPosition<<endl;
         }
     }
-    cout<<"peelingCounter = "<<peelingCounter<<endl;
+    if(print)
+        cout<<"peelingCounter = "<<peelingCounter<<endl;
 }
 
 void ObliviousDictionaryDB2Tables::checkOutput(){
@@ -339,16 +360,19 @@ void ObliviousDictionaryDB2Tables::sendData(shared_ptr<ProtocolPartyData> otherP
 //TODO should be deleted!!
 //    otherParty->getChannel()->write((byte*)&firstSeed, 8);
 //    otherParty->getChannel()->write((byte*)&secondSeed, 8);
-    cout<<"firstSeed = "<<firstSeed<<endl;
-    cout<<"secondSeed = "<<secondSeed<<endl;
-    cout<<"key size in bytes: "<<keys.size()*8<<endl;
+    if(print) {
+        cout << "firstSeed = " << firstSeed << endl;
+        cout << "secondSeed = " << secondSeed << endl;
+        cout << "key size in bytes: " << keys.size() * 8 << endl;
+    }
     otherParty->getChannel()->write((byte*)keys.data(), keys.size()*8);
 //TODO until here
 
     otherParty->getChannel()->write((byte*)firstEncValues.data(), firstEncValues.size()*8);
     otherParty->getChannel()->write((byte*)secondEncValues.data(), secondEncValues.size()*8);
     int polySize = tool->getSendableDataSize();
-    cout<<"polySize = "<<polySize/8<<endl;
+    if(print)
+        cout<<"polySize = "<<polySize/8<<endl;
     otherParty->getChannel()->write(tool->getSendableData(), polySize);
 }
 
@@ -367,18 +391,21 @@ void ObliviousDictionaryQuery2Tables::createSets(){
     second = unordered_set<uint64_t, Hasher>(hashSize, Hasher(secondSeed));
 
     tableRealSize = first.bucket_count();
-    cout<<"tableRealSize = "<<tableRealSize<<endl;
+    if(print)
+        cout<<"tableRealSize = "<<tableRealSize<<endl;
 
     while(tableRealSize/1.2 < hashSize){
         first = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(firstSeed));
         second = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(secondSeed));
 
         tableRealSize = first.bucket_count();
-        cout<<"tableRealSize = "<<tableRealSize<<endl;
+        if(print)
+            cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
 
    hashSize = tableRealSize/1.2;
-    cout<<"new hashSize = "<<hashSize<<endl;
+    if(print)
+        cout<<"new hashSize = "<<hashSize<<endl;
 
     tool->setHashSize(hashSize);
 }
@@ -391,8 +418,10 @@ void ObliviousDictionaryQuery2Tables::readData(shared_ptr<ProtocolPartyData> oth
     firstSeed = 123456;//prg->getRandom64();
     secondSeed = 987654;
 
-    cout<<"firstSeed = "<<firstSeed<<endl;
-    cout<<"secondSeed = "<<secondSeed<<endl;
+    if(print) {
+        cout << "firstSeed = " << firstSeed << endl;
+        cout << "secondSeed = " << secondSeed << endl;
+    }
     createSets();
 
     vector<uint64_t> tmpKeys(hashSize);
@@ -404,7 +433,8 @@ void ObliviousDictionaryQuery2Tables::readData(shared_ptr<ProtocolPartyData> oth
         keys[i] = tmpKeys[i];//prg->getRandom32() % hashSize;
     }
     int polySize = 5*log2(hashSize)*8;
-    cout<<"polySize = "<<polySize/8<<endl;
+    if(print)
+        cout<<"polySize = "<<polySize/8<<endl;
     byte* polynomial = new byte[polySize];
 
     firstEncValues.resize(tableRealSize, 0);
@@ -422,7 +452,9 @@ void ObliviousDictionaryQuery2Tables::readData(shared_ptr<ProtocolPartyData> oth
 
 void ObliviousDictionaryQuery2Tables::calcRealValues(){
 
-    cout<<"vals:"<<endl;
+    if(print)
+        cout<<"vals:"<<endl;
+
     uint64_t firstPosition, secondPosition, poliVal;
     int size = keys.size();
     vector<uint64_t> vals(size);
@@ -432,7 +464,8 @@ void ObliviousDictionaryQuery2Tables::calcRealValues(){
         secondPosition = second.bucket(keys[i]);
 
         vals[i] = firstEncValues[firstPosition] ^ secondEncValues[secondPosition] ^ poliVal;
-        cout<<"key = "<<keys[i]<<"val = "<<vals[i]<<endl;
+        if(print)
+            cout<<"key = "<<keys[i]<<"val = "<<vals[i]<<endl;
 //        cout<<"firstEncValues["<<firstPosition<<"] = "<<firstEncValues[firstPosition]<<endl;
 //        cout<<"secondEncValues["<<secondPosition<<"] = "<<secondEncValues[secondPosition]<<endl;
 //        cout<<"poliVal = "<<poliVal<<endl;
@@ -455,9 +488,11 @@ ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string tool
     thirdSeed = prg->getRandom64();
     createSets();
 
-    cout<<"after create sets"<<endl;
-    cout<<"tableRealSize = "<<tableRealSize<<endl;
-    cout<<"hashSize = "<<hashSize<<endl;
+    if(print) {
+        cout << "after create sets" << endl;
+        cout << "tableRealSize = " << tableRealSize << endl;
+        cout << "hashSize = " << hashSize << endl;
+    }
 
     firstEncValues.resize(tableRealSize, 0);
     secondEncValues.resize(tableRealSize, 0);
@@ -483,7 +518,8 @@ void ObliviousDictionaryDB3Tables::createSets(){
 
 
     tableRealSize = first.bucket_count();
-    cout<<"tableRealSize = "<<tableRealSize<<endl;
+    if(print)
+        cout<<"tableRealSize = "<<tableRealSize<<endl;
 
     while(tableRealSize*3/1.25 < hashSize){
         first = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(firstSeed));
@@ -491,16 +527,18 @@ void ObliviousDictionaryDB3Tables::createSets(){
         third = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(thirdSeed));
 
         tableRealSize = first.bucket_count();
-        cout<<"tableRealSize = "<<tableRealSize<<endl;
+        if(print)
+            cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
 
     first.max_load_factor(3);
     second.max_load_factor(3);
     third.max_load_factor(3);
 
-    hashSize = tableRealSize*3/1.25
-            ;
-    cout<<"new hashSize = "<<hashSize<<endl;
+    hashSize = tableRealSize*3/1.25;
+
+    if(print)
+        cout<<"new hashSize = "<<hashSize<<endl;
 }
 
 void ObliviousDictionaryDB3Tables::fillTables(){
@@ -521,13 +559,15 @@ void ObliviousDictionaryDB3Tables::fillTables(){
     }
 
 
-    cout<<"first set contains "<<first.size()<<endl;
-    cout<<"second set contains "<<second.size()<<endl;
-    cout<<"third set contains "<<third.size()<<endl;
+    if(print) {
+        cout << "first set contains " << first.size() << endl;
+        cout << "second set contains " << second.size() << endl;
+        cout << "third set contains " << third.size() << endl;
+    }
 
 }
 
-void ObliviousDictionaryDB3Tables::peeling() {
+void ObliviousDictionaryDB3Tables::peeling2() {
 
     peelingVector.resize(hashSize);
     peelingCounter = 0;
@@ -653,9 +693,10 @@ auto     t1 = high_resolution_clock::now();
         cout << "remain loops!!!" << endl;
     }
 */
-    cout<<"peelingCounter = "<<peelingCounter<<endl;
-    cout<<"circle size  = "<<(hashSize - peelingCounter)<<endl;
-
+    if(print) {
+        cout << "peelingCounter = " << peelingCounter << endl;
+        cout << "circle size  = " << (hashSize - peelingCounter) << endl;
+    }
 //    cout<<"peeling vector:"<<endl;
 //    for (int i=0; i<peelingCounter; i++){
 //        cout<<peelingVector[i]<<" ";
@@ -766,10 +807,186 @@ void ObliviousDictionaryDB3Tables::peelSecondSet(int position, uint64_t key, boo
 
 }
 
+
+void ObliviousDictionaryDB3Tables::peeling() {
+
+    peelingVector.resize(hashSize);
+    peelingCounter = 0;
+    int counterInLoop = 1;
+
+    queue<int> queueFirst;
+    queue<int> queueSecond;
+    queue<int> queueThird;
+
+    cout << "in peeling" << endl;
+//    cout<<"first loop"<<endl;
+
+    auto start = high_resolution_clock::now();
+
+     //Goes on the first hash
+    for (int position = 0; position < tableRealSize; position++) {
+        if (first.bucket_size(position) == 1) {
+            //Delete the vertex from the graph
+            auto key = *first.begin(position);
+//                cout << "remove key " << key << endl;
+            counterInLoop++;
+            peelingVector[peelingCounter++] = key;
+            first.erase(key);
+
+            //Update the second vertex on the edge
+            second.erase(key);
+            third.erase(key);
+        }
+    }
+
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(end-start).count();
+    if(print_timings)
+        cout << "time in milliseconds for first peel: " << duration << endl;
+
+    start = high_resolution_clock::now();
+    int bucketInd;
+    //Goes on the second has
+    for (int position = 0; position < tableRealSize; position++) {
+        if (second.bucket_size(position) == 1) {
+            //Delete the vertex from the graph
+            auto key = *second.begin(position);
+            second.erase(key);
+//                cout << "remove key " << key << endl;
+            counterInLoop++;
+            peelingVector[peelingCounter++] = key;
+
+            bucketInd = first.bucket(key);
+            first.erase(key);
+
+            if(first.bucket_size(bucketInd)==1)
+                queueFirst.push(bucketInd);
+
+            //Update the second vertex on the edge
+            third.erase(key);
+        }
+    }
+
+    end = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(end-start).count();
+    if(print_timings)
+        cout << "time in milliseconds for second peel: " << duration << endl;
+
+    start = high_resolution_clock::now();
+    for (int position = 0; position < tableRealSize; position++) {
+        if (third.bucket_size(position) == 1) {
+            //Delete the vertex from the graph
+            auto key = *third.begin(position);
+            third.erase(key);
+//                cout << "remove key " << key << endl;
+            counterInLoop++;
+            peelingVector[peelingCounter++] = key;
+
+            bucketInd = first.bucket(key);
+            first.erase(key);
+
+            if(first.bucket_size(bucketInd)==1)
+                queueFirst.push(bucketInd);
+
+            bucketInd = second.bucket(key);
+            second.erase(key);
+
+            if(second.bucket_size(bucketInd)==1)
+                queueSecond.push(bucketInd);
+
+        }
+    }
+
+    end = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(end-start).count();
+    if(print_timings)
+        cout << "time in milliseconds for third peel: " << duration << endl;
+
+    if(print) {
+        cout << "peelingCounter : " << peelingCounter << endl;
+        cout << "hashSize : " << hashSize << endl;
+
+        cout << "queueFirst.size() : " << queueFirst.size() << endl;
+        cout << "queueSecond.size() : " << queueSecond.size() << endl;
+        cout << "queueThird.size() : " << queueThird.size() << endl;
+    }
+
+    start = high_resolution_clock::now();
+    //handle the queues one by one
+    while(queueFirst.size()!=0 ||
+            queueSecond.size()!=0 ||
+            queueThird.size()!=0){
+
+        handleQueue(queueFirst, first,
+                    queueSecond, second,
+                       queueThird,third);
+
+        handleQueue(queueSecond, second,
+                    queueFirst, first,
+                    queueThird,third);
+
+
+        handleQueue(queueThird,third,
+                queueFirst, first,
+                    queueSecond, second);
+
+    }
+
+    end = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(end-start).count();
+    if(print_timings)
+        cout << "time in milliseconds for peel queues: " << duration << endl;
+
+
+    if(print) {
+        cout << "peelingCounter : " << peelingCounter << endl;
+        cout << "hashSize : " << hashSize << endl;
+    }
+
+    if(reportStatistics==1) {
+
+        statisticsFile << "" << ", \n";
+    }
+
+}
+
+void ObliviousDictionaryDB3Tables::handleQueue(queue<int> &queueMain, unordered_set<uint64_t, Hasher> &main,
+                                                queue<int> &queueOther1, unordered_set<uint64_t, Hasher> &other1,
+                                                queue<int> &queueOther2,unordered_set<uint64_t, Hasher> &other2) {
+
+    int bucketInd;
+    for(int i=0; i < queueMain.size(); i++){
+
+        int pos = queueMain.front();
+        queueMain.pop();
+        if(main.bucket_size(pos) == 1) {
+            auto key = *main.begin(pos);
+            main.erase(key);
+//                cout << "remove key " << key << endl;
+            peelingVector[peelingCounter++] = key;
+
+            bucketInd = other1.bucket(key);
+            other1.erase(key);
+
+            if (other1.bucket_size(bucketInd) == 1)
+                queueOther1.push(bucketInd);
+
+            bucketInd = other2.bucket(key);
+            other2.erase(key);
+
+            if (other2.bucket_size(bucketInd) == 1)
+                queueOther2.push(bucketInd);
+
+        }
+    }
+}
+
+
 void ObliviousDictionaryDB3Tables::generateExternalToolValues(){
 //    cout<<"in generate"<<endl;
     int polySize = 5*log2(hashSize);
-    cout<<"polySize = "<<polySize<<endl;
+    if(print)
+        cout<<"polySize = "<<polySize<<endl;
     vector<uint64_t> edgesForPolynomial(polySize);
     vector<uint64_t> valuesForPolynomial(polySize);
 //cout<<"before for"<<endl;
@@ -788,7 +1005,8 @@ void ObliviousDictionaryDB3Tables::generateExternalToolValues(){
 //                cout<<"bucket "<<i<<" got random value in second"<<endl;
         }
     }
-    cout<<"after for"<<endl;
+    if(print)
+        cout<<"after for"<<endl;
     //Get all the edges that are in the graph's circles and calc the polynomial values that should be for them.
     int polyCounter = 0;
     for (int i=0; i<tableRealSize; i++){
@@ -809,7 +1027,8 @@ void ObliviousDictionaryDB3Tables::generateExternalToolValues(){
         }
     }
 
-    cout<<"circles size =  "<<polyCounter<<endl;
+    if(print)
+        cout<<"circles size =  "<<polyCounter<<endl;
 
     if (polyCounter < polySize){
         for (int i=polyCounter; i<polySize; i++){
@@ -829,7 +1048,8 @@ void ObliviousDictionaryDB3Tables::generateExternalToolValues(){
 
 
 void ObliviousDictionaryDB3Tables::unpeeling(){
-    cout<<"in unpeeling"<<endl;
+    if(print)
+        cout<<"in unpeeling"<<endl;
     uint64_t firstPosition, secondPosition, thirdPosition, polyVal, key;
 //    vector<uint64_t> polyVals(peelingCounter);
 //    Poly::evalMersenneMultipoint(polyVals, polynomial, peelingVector);
@@ -871,7 +1091,8 @@ void ObliviousDictionaryDB3Tables::unpeeling(){
         }
 
     }
-    cout<<"peelingCounter = "<<peelingCounter<<endl;
+    if(print)
+        cout<<"peelingCounter = "<<peelingCounter<<endl;
 }
 
 void ObliviousDictionaryDB3Tables::checkOutput(){
@@ -917,9 +1138,11 @@ void ObliviousDictionaryDB3Tables::sendData(shared_ptr<ProtocolPartyData> otherP
     otherParty->getChannel()->write((byte*)&firstSeed, 8);
     otherParty->getChannel()->write((byte*)&secondSeed, 8);
     otherParty->getChannel()->write((byte*)&thirdSeed, 8);
-    cout<<"firstSeed = "<<firstSeed<<endl;
-    cout<<"secondSeed = "<<secondSeed<<endl;
-    cout<<"thirdSeed = "<<thirdSeed<<endl;
+    if(print) {
+        cout << "firstSeed = " << firstSeed << endl;
+        cout << "secondSeed = " << secondSeed << endl;
+        cout << "thirdSeed = " << thirdSeed << endl;
+    }
     otherParty->getChannel()->write((byte*)keys.data(), keys.size()*8);
 //TODO until here
 
@@ -927,7 +1150,8 @@ void ObliviousDictionaryDB3Tables::sendData(shared_ptr<ProtocolPartyData> otherP
     otherParty->getChannel()->write((byte*)secondEncValues.data(), secondEncValues.size()*8);
     otherParty->getChannel()->write((byte*)thirdEncValues.data(), thirdEncValues.size()*8);
     int polySize = tool->getSendableDataSize();
-    cout<<"polySize = "<<polySize/8<<endl;
+    if(print)
+        cout<<"polySize = "<<polySize/8<<endl;
     otherParty->getChannel()->write(tool->getSendableData(), polySize);
 }
 
@@ -949,7 +1173,8 @@ void ObliviousDictionaryQuery3Tables::createSets(){
 
 
     tableRealSize = first.bucket_count();
-    cout<<"tableRealSize = "<<tableRealSize<<endl;
+    if(print)
+        cout<<"tableRealSize = "<<tableRealSize<<endl;
 
     while(tableRealSize*3/1.25 < hashSize){
         first = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(firstSeed));
@@ -957,14 +1182,16 @@ void ObliviousDictionaryQuery3Tables::createSets(){
         third = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(thirdSeed));
 
         tableRealSize = first.bucket_count();
-        cout<<"tableRealSize = "<<tableRealSize<<endl;
+        if(print)
+            cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
 
     first.max_load_factor(3);
     second.max_load_factor(3);
     third.max_load_factor(3);
     hashSize = tableRealSize*3/1.25;
-    cout<<"new hashSize = "<<hashSize<<endl;
+    if(print)
+        cout<<"new hashSize = "<<hashSize<<endl;
 
     tool->setHashSize(hashSize);
 }
@@ -979,9 +1206,11 @@ void ObliviousDictionaryQuery3Tables::readData(shared_ptr<ProtocolPartyData> oth
 
     createSets();
 
-    cout<<"firstSeed = "<<firstSeed<<endl;
-    cout<<"secondSeed = "<<secondSeed<<endl;
-    cout<<"thirdSeed = "<<thirdSeed<<endl;
+    if(print) {
+        cout << "firstSeed = " << firstSeed << endl;
+        cout << "secondSeed = " << secondSeed << endl;
+        cout << "thirdSeed = " << thirdSeed << endl;
+    }
     vector<uint64_t> tmpKeys(hashSize);
     otherParty->getChannel()->read((byte*)tmpKeys.data(), tmpKeys.size()*8);
 
@@ -992,7 +1221,8 @@ void ObliviousDictionaryQuery3Tables::readData(shared_ptr<ProtocolPartyData> oth
     }
 
     int polySize = 5*log2(hashSize)*8;
-    cout<<"polySize = "<<polySize/8<<endl;
+    if(print)
+        cout<<"polySize = "<<polySize/8<<endl;
     byte* polynomial = new byte[polySize];
 
     firstEncValues.resize(tableRealSize, 0);
@@ -1003,17 +1233,20 @@ void ObliviousDictionaryQuery3Tables::readData(shared_ptr<ProtocolPartyData> oth
     otherParty->getChannel()->read((byte*)firstEncValues.data(), firstEncValues.size()*8);
     otherParty->getChannel()->read((byte*)secondEncValues.data(), secondEncValues.size()*8);
     otherParty->getChannel()->read((byte*)thirdEncValues.data(), thirdEncValues.size()*8);
-    cout<<"before read polynomial"<<endl;
+    if(print)
+        cout<<"before read polynomial"<<endl;
     otherParty->getChannel()->read(polynomial, polySize);
     tool->setSendableData(polynomial);
-    cout<<"after read polynomial"<<endl;
+    if(print)
+        cout<<"after read polynomial"<<endl;
 
     delete polynomial;
 }
 
 void ObliviousDictionaryQuery3Tables::calcRealValues(){
 
-    cout<<"vals:"<<endl;
+    if(print)
+        cout<<"vals:"<<endl;
     uint64_t firstPosition, secondPosition, thirdPosition, val, poliVal;
     int size = keys.size();
     vector<uint64_t> vals(size);
@@ -1025,7 +1258,8 @@ void ObliviousDictionaryQuery3Tables::calcRealValues(){
         thirdPosition = third.bucket(keys[i]);
 
         vals[i] = firstEncValues[firstPosition] ^ secondEncValues[secondPosition] ^ thirdEncValues[thirdPosition] ^ poliVal;
-        cout<<"key = "<<keys[i]<<" val = "<<vals[i]<<endl;
+        if(print)
+            cout<<"key = "<<keys[i]<<" val = "<<vals[i]<<endl;
     }
 
 }
