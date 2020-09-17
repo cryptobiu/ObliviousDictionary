@@ -1,0 +1,1 @@
+{"auxiliaryData":{},"parameters":{"hashSize":"1000000","internalIterationsNumber":"1","partiesFile":"Parties.txt","partyID":"0","protocolName":"ObliviousDictionary","reportStatistics":"1","tool":"poly","version":"3Tables"},"times":[{"iteration_0":"3603.945","name":"Online"}]}

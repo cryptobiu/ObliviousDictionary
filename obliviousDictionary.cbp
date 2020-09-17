@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="obliviousDictionary"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/meital/ObliviousDictionary"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/meital/ObliviousDictionary"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/meital/ObliviousDictionary"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="obliviousDictionary">
+				<Option output="/home/meital/ObliviousDictionary/obliviousDictionary" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/meital/ObliviousDictionary"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/meital"/>
+					<Add directory="/home/meital/libscapi/install/include"/>
+					<Add directory="/home/meital/ObliviousDictionary/xxHash"/>
+					<Add directory="/home/meital/libscapi/install/include/OTExtensionBristol"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 obliviousDictionary"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="obliviousDictionary/fast">
+				<Option output="/home/meital/ObliviousDictionary/obliviousDictionary" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/meital/ObliviousDictionary"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/meital"/>
+					<Add directory="/home/meital/libscapi/install/include"/>
+					<Add directory="/home/meital/ObliviousDictionary/xxHash"/>
+					<Add directory="/home/meital/libscapi/install/include/OTExtensionBristol"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 obliviousDictionary/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/meital/ObliviousDictionary/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/meital/ObliviousDictionary/Hasher.cpp">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/Hasher.h">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/ObliviousDictionary.cpp">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/ObliviousDictionary.h">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/Poly.cpp">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/Poly.h">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/ProtocolParty.cpp">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/ProtocolParty.h">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/Tools.cpp">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/Tools.h">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/main.cpp">
+			<Option target="obliviousDictionary"/>
+		</Unit>
+		<Unit filename="/home/meital/ObliviousDictionary/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

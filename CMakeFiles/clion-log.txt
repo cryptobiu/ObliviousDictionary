@@ -1,0 +1,4 @@
+/home/meital/clion-2020.1.1/bin/cmake/linux/bin/cmake -G "CodeBlocks - Unix Makefiles" /home/meital/ObliviousDictionary
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/meital/ObliviousDictionary
