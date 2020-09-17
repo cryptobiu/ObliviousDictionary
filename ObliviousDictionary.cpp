@@ -6,8 +6,8 @@
 #include "Tools.h"
 #include <queue>
 
-#define print_timings true
-#define print true
+#define print_timings false
+#define print false
 
 void ObliviousDictionaryDB::init() {
     vals.clear();
@@ -478,10 +478,13 @@ void ObliviousDictionaryQuery2Tables::output(){
 }
 
 
-ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId) : ObliviousDictionaryDB(size) {
+ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId, float tableRatio) : ObliviousDictionaryDB(size) {
 
     this->batchSize = batchSize;
     this->processId = processId;
+    this->tableRatio = tableRatio;
+    this->hashOriginalSize = size;
+
 
     circleVec.resize(batchSize);
     auto key = prg->generateKey(128);
@@ -527,9 +530,9 @@ void ObliviousDictionaryDB3Tables::init() {
 
 
 void ObliviousDictionaryDB3Tables::createSets(){
-    first = unordered_set<uint64_t, Hasher>(hashSize*1.24/3.0, Hasher(firstSeed));
-    second = unordered_set<uint64_t, Hasher>(hashSize*1.24/3.0, Hasher(secondSeed));
-    third = unordered_set<uint64_t, Hasher>(hashSize*1.24/3.0, Hasher(thirdSeed));
+    first = unordered_set<uint64_t, Hasher>(hashSize*tableRatio/3.0, Hasher(firstSeed));
+    second = unordered_set<uint64_t, Hasher>(hashSize*tableRatio/3.0, Hasher(secondSeed));
+    third = unordered_set<uint64_t, Hasher>(hashSize*tableRatio/3.0, Hasher(thirdSeed));
 
 
 
@@ -537,7 +540,7 @@ void ObliviousDictionaryDB3Tables::createSets(){
     if(print)
         cout<<"tableRealSize = "<<tableRealSize<<endl;
 
-    while(tableRealSize*3.0/1.24 < hashSize){
+    while(tableRealSize*3.0/tableRatio < hashSize){
         first = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(firstSeed));
         second = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(secondSeed));
         third = unordered_set<uint64_t, Hasher>(tableRealSize + 1, Hasher(thirdSeed));
@@ -547,11 +550,11 @@ void ObliviousDictionaryDB3Tables::createSets(){
             cout<<"tableRealSize = "<<tableRealSize<<endl;
     }
 
-    first.max_load_factor(7);
-    second.max_load_factor(7);
-    third.max_load_factor(7);
+    first.max_load_factor(3.0/tableRatio + 1);
+    second.max_load_factor(3.0/tableRatio +1);
+    third.max_load_factor(3.0/tableRatio + 1);
 
-    hashSize = tableRealSize*3.0/1.24;
+    hashSize = tableRealSize*3.0/tableRatio;
 
     if(print)
         cout<<"new hashSize = "<<hashSize<<endl;
@@ -1006,25 +1009,36 @@ void ObliviousDictionaryDB3Tables::updateIteration(int iteration){
     //write to file
     if(iteration%batchSize==batchSize-1){
 
-        int greaterThan10 = 0;
-        int greaterThan40 = 0;
-        int greaterThan100 = 0;
+        int greaterHalfLog = 0;
+        int greater1Log = 0;
+        int greater2Log = 0;
+        int greater3Log = 0;
+        int greater5Log = 0;
+
 
         for(int i=0; i<batchSize; i++){
 
             statisticsFile<<circleVec[i] << ",\n";
 
-            if(circleVec[i]>100)
-                greaterThan100++;
-            else if(circleVec[i]>40)
-                greaterThan40++;
-            else if(circleVec[i]>10)
-                greaterThan10++;
+            if(circleVec[i]<5*log2(hashSize)){
+                //do nothing
+            }
+            else if(circleVec[i]>5*log2(hashSize))
+                greater5Log++;
+            else if(circleVec[i]>3*log2(hashSize))
+                greater3Log++;
+            else if(circleVec[i]>2*log2(hashSize))
+                greater2Log++;
+            else if(circleVec[i]>log2(hashSize))
+                greater1Log++;
+            else if(circleVec[i]>0.5*log2(hashSize))
+                greaterHalfLog++;
+
         }
 
         statisticsFile<<flush;
 
-        groupedStatisticsFile<<greaterThan100 << "," << greaterThan40 << ","<< greaterThan10<< endl;
+        groupedStatisticsFile<<greater5Log << "," << greater3Log << ","<< greater2Log<< ","<<greater1Log<<","<<greaterHalfLog<<endl;
 
     }
 }

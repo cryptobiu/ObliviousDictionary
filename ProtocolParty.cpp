@@ -71,13 +71,16 @@ DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
 
     auto batchSize = stoi(this->getParser().getValueByKey(arguments, "batchSize"));
 
+    auto tableRatio = stof(this->getParser().getValueByKey(arguments, "tableRatio"));
+
+
     auto processId = stoi(this->getParser().getValueByKey(arguments, "processId"));
 
 
     if (version.compare("2Tables") == 0) {
         dic = new ObliviousDictionaryDB2Tables(hashSize, tool);
     } else if (version.compare("3Tables") == 0) {
-        dic = new ObliviousDictionaryDB3Tables(hashSize, tool,batchSize, processId);
+        dic = new ObliviousDictionaryDB3Tables(hashSize, tool,batchSize, processId, tableRatio);
     }
     dic->setReportStatstics(reportStatistics);
 

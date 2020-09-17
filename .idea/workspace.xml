@@ -13,7 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1e0fbef0-5b68-4eb0-bfef-77bafbb796a6" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObliviousDictionary.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ObliviousDictionary.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ObliviousDictionary.h" beforeDir="false" afterPath="$PROJECT_DIR$/ObliviousDictionary.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ProtocolParty.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ProtocolParty.cpp" afterDir="false" />
@@ -44,7 +43,7 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
   <component name="RunManager">
-    <configuration name="obliviousDictionary" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-partyID 0 -internalIterationsNumber 100 -hashSize 1000 -partiesFile Parties.txt -reportStatistics 1 -version 3Tables -tool poly -batchSize 20 -processId 0" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="obliviousDictionary" TARGET_NAME="obliviousDictionary" CONFIG_NAME="Default" RUN_TARGET_PROJECT_NAME="obliviousDictionary" RUN_TARGET_NAME="obliviousDictionary">
+    <configuration name="obliviousDictionary" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-partyID 0 -internalIterationsNumber 100 -hashSize 1000 -partiesFile Parties.txt -reportStatistics 1 -version 3Tables -tool poly -batchSize 20 -processId 0 -tableRatio 1.23" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="obliviousDictionary" TARGET_NAME="obliviousDictionary" CONFIG_NAME="Default" RUN_TARGET_PROJECT_NAME="obliviousDictionary" RUN_TARGET_NAME="obliviousDictionary">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -63,7 +62,7 @@
       <workItem from="1562837972518" duration="3203000" />
       <workItem from="1563348270176" duration="41351000" />
       <workItem from="1599725134903" duration="21238000" />
-      <workItem from="1600075979934" duration="22351000" />
+      <workItem from="1600075979934" duration="29590000" />
     </task>
     <servers />
   </component>
@@ -71,30 +70,30 @@
     <option name="version" value="2" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1600262241781">
+    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1600327948108">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1299.741@67.27.1299.741" timestamp="1600262241781" />
+    <state x="174" y="54" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1299.741@67.27.1299.741" timestamp="1600327948108" />
     <state width="495" height="506" key="DebuggerActiveHint" timestamp="1600261039521">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
     <state width="495" height="506" key="DebuggerActiveHint/67.27.1299.741@67.27.1299.741" timestamp="1600261039521" />
-    <state width="1253" height="110" key="GridCell.Tab.0.bottom" timestamp="1600261355774">
+    <state width="1253" height="31" key="GridCell.Tab.0.bottom" timestamp="1600328792011">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="110" key="GridCell.Tab.0.bottom/67.27.1299.741@67.27.1299.741" timestamp="1600261355774" />
-    <state width="1253" height="110" key="GridCell.Tab.0.center" timestamp="1600261355773">
+    <state width="1253" height="31" key="GridCell.Tab.0.bottom/67.27.1299.741@67.27.1299.741" timestamp="1600328792011" />
+    <state width="1253" height="31" key="GridCell.Tab.0.center" timestamp="1600328792011">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="110" key="GridCell.Tab.0.center/67.27.1299.741@67.27.1299.741" timestamp="1600261355773" />
-    <state width="1253" height="110" key="GridCell.Tab.0.left" timestamp="1600261355773">
+    <state width="1253" height="31" key="GridCell.Tab.0.center/67.27.1299.741@67.27.1299.741" timestamp="1600328792011" />
+    <state width="1253" height="31" key="GridCell.Tab.0.left" timestamp="1600328792010">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="110" key="GridCell.Tab.0.left/67.27.1299.741@67.27.1299.741" timestamp="1600261355773" />
-    <state width="1253" height="110" key="GridCell.Tab.0.right" timestamp="1600261355774">
+    <state width="1253" height="31" key="GridCell.Tab.0.left/67.27.1299.741@67.27.1299.741" timestamp="1600328792010" />
+    <state width="1253" height="31" key="GridCell.Tab.0.right" timestamp="1600328792011">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="110" key="GridCell.Tab.0.right/67.27.1299.741@67.27.1299.741" timestamp="1600261355774" />
+    <state width="1253" height="31" key="GridCell.Tab.0.right/67.27.1299.741@67.27.1299.741" timestamp="1600328792011" />
     <state width="1253" height="137" key="GridCell.Tab.1.bottom" timestamp="1600261130903">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
@@ -144,28 +143,28 @@
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>935</line>
+          <line>938</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>939</line>
+          <line>942</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <condition expression="bucketInd&gt;10000" language="ObjectiveC" />
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>904</line>
+          <line>907</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>1003</line>
+          <line>1006</line>
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/ObliviousDictionary.cpp</url>
-          <line>1008</line>
+          <line>1011</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>

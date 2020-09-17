@@ -53,6 +53,8 @@ protected:
     ofstream groupedStatisticsFile;
     int processId;
     int batchSize;
+    float tableRatio;
+    int hashOriginalSize;
     vector<int> circleVec;
 
 
@@ -88,12 +90,12 @@ public:
         if (reportStatistics == 1) {
 
             cout<<"statistics file created"<<endl;
-            statisticsFile.open("statisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashSize) +
-            "BatchSize"+ to_string(batchSize)+  ".csv");
-            groupedStatisticsFile.open("groupedStatisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashSize) +
-                                       "BatchSize"+ to_string(batchSize)+  ".csv");
+            statisticsFile.open("statisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashOriginalSize) +
+            "BatchSize"+ to_string(batchSize)+ "TableRatio" + to_string(tableRatio)+  ".csv");
+            groupedStatisticsFile.open("groupedStatisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashOriginalSize) +
+                                       "BatchSize"+ to_string(batchSize)+ "TableRatio" + to_string(tableRatio) + ".csv");
 
-            groupedStatisticsFile<<"Greater Than 100 ,  Greater than 40 , Greater than 10"<< endl;
+            groupedStatisticsFile<<"greater than 5Log , greater than 3 Log , greater than 2 Log, greater than Log, greater than 0.5 Log, \n";
 
             circleVec.resize(batchSize);
         }};
@@ -193,7 +195,7 @@ private:
     void peelThirdSet(int position, vector<uint64_t> * keysToDeleteFromThree);
 public:
 
-    ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId);
+    ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId, float tableRatio);
 
     void createSets();
 
