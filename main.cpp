@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
 //    } else {
 //    }
 
+    cout << "partyID = " << partyID << endl;
     if (partyID == 0) {
         DBParty dic(argc, argv);
         dic.run();

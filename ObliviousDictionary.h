@@ -86,16 +86,17 @@ public:
     virtual void sendData(shared_ptr<ProtocolPartyData> otherParty) = 0;
 
     void setReportStatstics(int flag){
+        cout << "in report statistics" << endl;
         reportStatistics = flag;
         if (reportStatistics == 1) {
 
             cout<<"statistics file created"<<endl;
-            statisticsFile.open("statisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashOriginalSize) +
-            "BatchSize"+ to_string(batchSize)+ "TableRatio" + to_string(tableRatio)+  ".csv");
-            groupedStatisticsFile.open("groupedStatisticsProcessId" + to_string(processId) + "NumElements" + to_string(hashOriginalSize) +
-                                       "BatchSize"+ to_string(batchSize)+ "TableRatio" + to_string(tableRatio) + ".csv");
-
-            groupedStatisticsFile<<"greater than 5Log , greater than 3 Log , greater than 2 Log, greater than Log, greater than 0.5 Log, \n";
+            statisticsFile.open("ungroup-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) +
+            "-batch-"+ to_string(batchSize)+ "-ratio" + to_string(tableRatio)+  "-.csv");
+            groupedStatisticsFile.open("group-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) +
+                                       "-batch-"+ to_string(batchSize)+ "-ratio-" + to_string(tableRatio) + "-.csv");
+            groupedStatisticsFile<<"2core > 0.5logm, 1logm, 2logm, 3logm, 4logm, 5logm\n";
+            // groupedStatisticsFile<<"greater than 5Log , greater than 3 Log , greater than 2 Log, greater than Log, greater than 0.5 Log, \n";
 
             circleVec.resize(batchSize);
         }};

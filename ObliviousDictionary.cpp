@@ -837,7 +837,7 @@ void ObliviousDictionaryDB3Tables::peeling() {
     queue<int> queueSecond;
     queue<int> queueThird;
 
-    cout << "in peeling" << endl;
+    // cout << "in peeling" << endl;
 //    cout<<"first loop"<<endl;
 
     auto start = high_resolution_clock::now();
@@ -1013,32 +1013,53 @@ void ObliviousDictionaryDB3Tables::updateIteration(int iteration){
         int greater1Log = 0;
         int greater2Log = 0;
         int greater3Log = 0;
+        int greater4Log = 0;
         int greater5Log = 0;
 
 
         for(int i=0; i<batchSize; i++){
-
+            auto logm = log2(hashSize);
             statisticsFile<<circleVec[i] << ",\n";
 
-            if(circleVec[i]<5*log2(hashSize)){
-                //do nothing
-            }
-            else if(circleVec[i]>5*log2(hashSize))
+            // if(circleVec[i]<5*log2(hashSize)){
+            //     //do nothing
+            // }
+            if(circleVec[i]>0){
+            // cout << "logm = " << logm << ", 2core size = " << circleVec[i] << endl;
+            
+            if(circleVec[i]>5*logm) {
+                // cout << "greater than 5logm" << endl;
                 greater5Log++;
-            else if(circleVec[i]>3*log2(hashSize))
+                }
+            if(circleVec[i]>4*logm){
+                // cout << "greater than 4logm" << endl;
+                greater4Log++;
+                }
+            if(circleVec[i]>3*logm){
+                // cout << "greater than 3logm" << endl;
                 greater3Log++;
-            else if(circleVec[i]>2*log2(hashSize))
+            }
+            if(circleVec[i]>2*logm){
+                // cout << "greater than 2logm" << endl;
                 greater2Log++;
-            else if(circleVec[i]>log2(hashSize))
+            }
+            if(circleVec[i]>1*logm){
+                // cout << "greater than 1logm" << endl;
                 greater1Log++;
-            else if(circleVec[i]>0.5*log2(hashSize))
+            }
+            if(circleVec[i]>0.5*logm){
+                // cout << "greater than 0.5logm" << endl;
                 greaterHalfLog++;
+            }
+            }
 
         }
 
         statisticsFile<<flush;
 
-        groupedStatisticsFile<<greater5Log << "," << greater3Log << ","<< greater2Log<< ","<<greater1Log<<","<<greaterHalfLog<<endl;
+        groupedStatisticsFile << greaterHalfLog << ", " << greater1Log << ", " << greater2Log << ", " << greater3Log << ", " << greater4Log << ", " << greater5Log << endl;
+        // groupedStatisticsFile.flush;
+        // groupedStatisticsFile<<greater5Log << "," << greater3Log << ","<< greater2Log<< ","<<greater1Log<<","<<greaterHalfLog<<endl;
 
     }
 }
