@@ -91,9 +91,9 @@ public:
         if (reportStatistics == 1) {
 
             cout<<"statistics file created"<<endl;
-            statisticsFile.open("ungroup-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) +
+            statisticsFile.open("results/ungroup-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) +
             "-batch-"+ to_string(batchSize)+ "-ratio" + to_string(tableRatio)+  "-.csv");
-            groupedStatisticsFile.open("group-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) +
+            groupedStatisticsFile.open("results/group-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) + "-runs-" +
                                        "-batch-"+ to_string(batchSize)+ "-ratio-" + to_string(tableRatio) + "-.csv");
             groupedStatisticsFile<<"2core > 0.5logm, 1logm, 2logm, 3logm, 4logm, 5logm\n";
             // groupedStatisticsFile<<"greater than 5Log , greater than 3 Log , greater than 2 Log, greater than Log, greater than 0.5 Log, \n";
