@@ -15,11 +15,12 @@ def check(n_runs, m, ratio):
     n_cpus = multiprocessing.cpu_count()
     n_processes = n_cpus
     n_runs_per_proc = math.ceil(n_runs/n_processes)
+    batch = n_runs_per_proc if n_runs_per_proc<BATCH else BATCH
 
     dataset = []
     for i in range(n_processes):
         identifier = uuid.uuid1()
-        command = "./obliviousDictionary -partyID 0 -internalIterationsNumber %d -hashSize %d -partiesFile Parties.txt -reportStatistics 1 -version 3Tables -tool poly -batchSize %d -processId %d -tableRatio %.2f"%(n_runs_per_proc, m, BATCH, identifier.int, ratio)
+        command = "./obliviousDictionary -partyID 0 -internalIterationsNumber %d -hashSize %d -partiesFile Parties.txt -reportStatistics 1 -version 3Tables -tool poly -batchSize %d -processId %d -tableRatio %.2f"%(n_runs_per_proc, m, batch, identifier.int, ratio)
         print(command)
         dataset.append(command)
     

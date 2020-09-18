@@ -51,7 +51,7 @@ protected:
     int reportStatistics=0;
     ofstream statisticsFile;
     ofstream groupedStatisticsFile;
-    int processId;
+    string processId;
     int batchSize;
     float tableRatio;
     int hashOriginalSize;
@@ -91,9 +91,9 @@ public:
         if (reportStatistics == 1) {
 
             cout<<"statistics file created"<<endl;
-            statisticsFile.open("results/ungroup-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) +
+            statisticsFile.open("results/ungroup-" + processId + "-m-" + to_string(hashOriginalSize) +
             "-batch-"+ to_string(batchSize)+ "-ratio" + to_string(tableRatio)+  "-.csv");
-            groupedStatisticsFile.open("results/group-" + to_string(processId) + "-m-" + to_string(hashOriginalSize) + "-runs-" +
+            groupedStatisticsFile.open("results/group-" + processId + "-m-" + to_string(hashOriginalSize) + "-runs-" +
                                        "-batch-"+ to_string(batchSize)+ "-ratio-" + to_string(tableRatio) + "-.csv");
             groupedStatisticsFile<<"2core > 0.5logm, 1logm, 2logm, 3logm, 4logm, 5logm\n";
             // groupedStatisticsFile<<"greater than 5Log , greater than 3 Log , greater than 2 Log, greater than Log, greater than 0.5 Log, \n";
@@ -196,7 +196,7 @@ private:
     void peelThirdSet(int position, vector<uint64_t> * keysToDeleteFromThree);
 public:
 
-    ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId, float tableRatio);
+    ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, string processId, float tableRatio);
 
     void createSets();
 

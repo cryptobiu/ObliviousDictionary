@@ -478,7 +478,7 @@ void ObliviousDictionaryQuery2Tables::output(){
 }
 
 
-ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, int processId, float tableRatio) : ObliviousDictionaryDB(size) {
+ObliviousDictionaryDB3Tables::ObliviousDictionaryDB3Tables(int size, string toolType,int batchSize, std::string processId, float tableRatio) : ObliviousDictionaryDB(size) {
 
     this->batchSize = batchSize;
     this->processId = processId;

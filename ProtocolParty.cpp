@@ -77,7 +77,7 @@ DBParty::DBParty(int argc, char *argv[]): ProtocolParty(argc, argv){
     auto tableRatio = stof(this->getParser().getValueByKey(arguments, "tableRatio"));
 
 
-    auto processId = stoi(this->getParser().getValueByKey(arguments, "processId"));
+    auto processId = this->getParser().getValueByKey(arguments, "processId");
 
 
     if (version.compare("2Tables") == 0) {

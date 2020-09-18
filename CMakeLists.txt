@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(obliviousDictionary)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g  -std=c++17  -mbmi2 -msse4.2 -march=native -m64 -pthread -fpermissive")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3  -std=c++17  -mbmi2 -msse4.2 -march=native -m64 -pthread -fpermissive")
 INCLUDE_DIRECTORIES($ENV{HOME} $ENV{HOME}/libscapi/install/include xxHash
         $ENV{HOME}/libscapi/install/include/OTExtensionBristol )
 link_directories(/usr/ssl/lib/ $ENV{HOME}/libscapi/install/lib xxHash)
