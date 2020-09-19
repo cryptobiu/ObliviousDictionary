@@ -147,9 +147,7 @@ if __name__ == "__main__":
     m = int(sys.argv[2])
     ratio = float(sys.argv[3])
     batchsize = int(sys.argv[4])
-    # n_runs = 2000
-    # m = 8000
-    # ratio = 1.25
+    
     check(n_runs, m, ratio, batchsize)
     process_results(m, ratio)
     fp = get_failure_ratio(m, ratio)
