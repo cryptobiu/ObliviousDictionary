@@ -8,8 +8,9 @@ from os.path import isfile, join
 from operator import add
 # import numpy
 import datetime
+import sys
 
-BATCH = 500
+
 PATH = "results"
 NEW_GROUP_FILE = "totalgroup-m-%d-ratio-%.3f-totalruns-%d-.txt"
 NEW_DETAILED_FILE = "total-m-%d-ratio-%.3f-.txt"
@@ -19,27 +20,29 @@ def runproc(cmd):
     os.system(cmd)
 
 
-def check(n_runs, m, ratio):
+def check(n_runs, m, ratio, batchsize):
     n_cpus = multiprocessing.cpu_count()
     n_processes = n_cpus
     n_runs_per_proc = math.ceil(n_runs/n_processes)
-    batch = n_runs_per_proc if n_runs_per_proc<BATCH else BATCH
+    batch = n_runs_per_proc if n_runs_per_proc<batchsize else batchsize
 
     dataset = []
     for i in range(n_processes):
         identifier = uuid.uuid1()
         command = "./obliviousDictionary -partyID 0 -internalIterationsNumber %d -hashSize %d -partiesFile Parties.txt -reportStatistics 1 -version 3Tables -tool poly -batchSize %d -processId %d -tableRatio %.2f"%(n_runs_per_proc, m, batch, identifier.int, ratio)
-        print(command)
-        dataset.append(command)
+        timestr = datetime.datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
+        cmdoutput = command + " >> proc-%d--%s.log"%(i, timestr)
+        print(cmdoutput)
+        dataset.append(cmdoutput)
     
-    start = datetime.datetime.now()
+    # start = datetime.datetime.now()
     with Pool(processes=n_processes) as pool:
         result = pool.map(runproc, dataset, 1)
-    end = datetime.datetime.now()
-    difftime = end-start
-    millis = difftime.seconds*1000+difftime.microseconds/1000
-    print("%s\nfinished."%("*"*10))
-    print("Time=%d seconds, or %d milliseconds per run\n%s"%(difftime.seconds, float(millis)/float(n_runs), "*"*10 ))
+    # end = datetime.datetime.now()
+    # difftime = end-start
+    # millis = difftime.seconds*1000+difftime.microseconds/1000
+    # print("%s\nfinished."%("*"*10))
+    # print("Time=%d seconds, or %d milliseconds per run\n%s"%(difftime.seconds, float(millis)/float(n_runs), "*"*10 ))
 
 
 
@@ -123,7 +126,7 @@ def get_failure_ratio(m, ratio):
             return float(failures[1])/float(total_runs)
             
 
-# def find_best_ratio(m):
+# def find_best_ratio(m, start_ratio):
 
 #     best_ratio = 1.25
 
@@ -132,19 +135,24 @@ def get_failure_ratio(m, ratio):
 #     print(possibilities)
 #     print(checked)
 
-#     print(possibilities.index(1.25))
-#     print(possibilities.index(1.49))
+#     for i in numpy.arange(start_ratio,1.51,0.01):
+
 
 
 
 
 
 if __name__ == "__main__":
-    n_runs = 2000
-    m = 8000
-    ratio = 1.25
-    check(n_runs, m, ratio)
+    n_runs = int(sys.argv[1])
+    m = int(sys.argv[2])
+    ratio = float(sys.argv[3])
+    batchsize = int(sys.argv[4])
+    # n_runs = 2000
+    # m = 8000
+    # ratio = 1.25
+    check(n_runs, m, ratio, batchsize)
     process_results(m, ratio)
     fp = get_failure_ratio(m, ratio)
     print("fp = %f"%fp)
+    
     # find_best_ratio(m)
