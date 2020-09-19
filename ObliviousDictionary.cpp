@@ -1019,7 +1019,7 @@ void ObliviousDictionaryDB3Tables::updateIteration(int iteration){
 
         for(int i=0; i<batchSize; i++){
             auto logm = log2(hashSize);
-            statisticsFile<<circleVec[i] << ",\n";
+            statisticsFile<<circleVec[i] << "\n";
 
             // if(circleVec[i]<5*log2(hashSize)){
             //     //do nothing
