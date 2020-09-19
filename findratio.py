@@ -7,6 +7,7 @@ from os import listdir
 from os.path import isfile, join
 from operator import add
 # import numpy
+import datetime
 
 BATCH = 500
 PATH = "results"
@@ -31,10 +32,14 @@ def check(n_runs, m, ratio):
         print(command)
         dataset.append(command)
     
+    start = datetime.datetime.now()
     with Pool(processes=n_processes) as pool:
         result = pool.map(runproc, dataset, 1)
-
-    print("finished")
+    end = datetime.datetime.now()
+    difftime = end-start
+    millis = difftime.seconds*1000+difftime.microseconds/1000
+    print("%s\nfinished."%("*"*10))
+    print("Time=%d seconds, or %d milliseconds per run\n%s"%(difftime.seconds, float(millis)/float(n_runs), "*"*10 ))
 
 
 
@@ -135,8 +140,11 @@ def get_failure_ratio(m, ratio):
 
 
 if __name__ == "__main__":
-    check(200000, 8000, 1.25)
-    process_results(8000, 1.25)
-    fp = get_failure_ratio(8000,1.25)
+    n_runs = 2000
+    m = 8000
+    ratio = 1.25
+    check(n_runs, m, ratio)
+    process_results(m, ratio)
+    fp = get_failure_ratio(m, ratio)
     print("fp = %f"%fp)
-    # find_best_ratio(8000)
+    # find_best_ratio(m)
