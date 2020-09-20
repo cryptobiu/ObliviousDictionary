@@ -49,7 +49,7 @@ def check(n_runs, m, ratio, batchsize):
 def aggregate_file(fname):
     file1 = open(join(PATH,fname), 'r') 
     lines = file1.readlines()
-    x_batch_fails = [0,0,0,0,0,0] #total number of failures per batch for [0.5,1,2,3,4,5](log m)
+    x_batch_fails = [0,0,0,0,0,0,0] #total number of failures per batch for [0.5,1,2,3,4,5](log m) and number of time 2core was greater than zero
     num_batches = 0
     for l in lines[1:]: #the first line is only a header
         num_batches += 1
@@ -67,7 +67,7 @@ def process_results(m, ratio):
     onlyfiles = [f for f in listdir(PATH) if isfile(join(PATH, f))]
     
     #the group files first
-    x_file_fails = [0,0,0,0,0,0] #total number of failures per file for [0.5,1,2,3,4,5](log m)
+    x_file_fails = [0,0,0,0,0,0,0] #total number of failures per file for [0.5,1,2,3,4,5](log m)
     total_runs = 0
     for f in onlyfiles:
         args = f.split("-")
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
     check(n_runs, m, ratio, batchsize)
     process_results(m, ratio)
-    fp = get_failure_ratio(m, ratio)
-    print("fp = %f"%fp)
+    # fp = get_failure_ratio(m, ratio)
+    # print("fp = %f"%fp)
     
     # find_best_ratio(m)
