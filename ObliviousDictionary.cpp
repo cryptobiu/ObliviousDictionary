@@ -1009,6 +1009,8 @@ void ObliviousDictionaryDB3Tables::updateIteration(int iteration){
     //write to file
     if(iteration%batchSize==batchSize-1){
 
+
+        int greater0 = 0;
         int greaterHalfLog = 0;
         int greater1Log = 0;
         int greater2Log = 0;
@@ -1016,10 +1018,15 @@ void ObliviousDictionaryDB3Tables::updateIteration(int iteration){
         int greater4Log = 0;
         int greater5Log = 0;
 
+        statisticsFile<<"* finished *" << batchSize << "* runs" << endl;
 
         for(int i=0; i<batchSize; i++){
             auto logm = log2(hashSize);
-            statisticsFile<<circleVec[i] << "\n";
+
+            if (circleVec[i]>0) {
+                greater0 ++;
+                // statisticsFile<<circleVec[i] << "\n";
+            }
 
             // if(circleVec[i]<5*log2(hashSize)){
             //     //do nothing
@@ -1057,7 +1064,7 @@ void ObliviousDictionaryDB3Tables::updateIteration(int iteration){
 
         statisticsFile<<flush;
 
-        groupedStatisticsFile << greaterHalfLog << ", " << greater1Log << ", " << greater2Log << ", " << greater3Log << ", " << greater4Log << ", " << greater5Log << endl;
+        groupedStatisticsFile << greaterHalfLog << ", " << greater1Log << ", " << greater2Log << ", " << greater3Log << ", " << greater4Log << ", " << greater5Log << ", " << greater0 << endl;
         // groupedStatisticsFile.flush;
         // groupedStatisticsFile<<greater5Log << "," << greater3Log << ","<< greater2Log<< ","<<greater1Log<<","<<greaterHalfLog<<endl;
 
