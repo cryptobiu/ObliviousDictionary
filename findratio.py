@@ -84,6 +84,7 @@ def process_results(m, ratio):
         print("written to %s"%newgroup_fname)
     print("files total:\n%s"%str(x_file_fails))
     print("total runs: %d"%total_runs)
+    return
 
         
     #the raw files now
@@ -143,11 +144,16 @@ def get_failure_ratio(m, ratio):
 
 
 if __name__ == "__main__":
+    if "results" == sys.argv[1]:
+        m = int(sys.argv[2])
+        ratio = float(sys.argv[3])
+        process_results(m, ratio)
+        exit(0)
     n_runs = int(sys.argv[1])
     m = int(sys.argv[2])
     ratio = float(sys.argv[3])
     batchsize = int(sys.argv[4])
-    
+
     check(n_runs, m, ratio, batchsize)
     process_results(m, ratio)
     fp = get_failure_ratio(m, ratio)
